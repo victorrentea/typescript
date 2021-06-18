@@ -6,8 +6,9 @@ import {calculateOrderPrice} from "../src/SplitPhase2";
 
 describe('The test environment', () => {
     it('should pass', () => {
-        console.log(calculateOrderPrice("Chair-CHR 4", new Map([["CHR", 5]])));
-        expect(true).to.be.true;
+        let v = calculateOrderPrice("Chair-CHR 4", new Map([["CHR", 5]]));
+        console.log(v);
+        expect(v).to.be.eq(20);
     });
 
 
