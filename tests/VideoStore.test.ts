@@ -1,26 +1,28 @@
 import {expect} from 'chai';
 import {describe, it} from 'mocha';
-import {MOVIE_CATEGORY} from "../src/Movie";
-import {Customer} from "../src/Customer";
+import {Movie, MovieCategory} from "../src/Movie";
+import {Customer, Rental} from "../src/Customer";
+import {StatementGenerator} from "../src/StatementGenerator";
 
 
 describe('Videostore', () => {
     it('Characterization Test ', function () {
 
-    let customer = new Customer("John Doe");
-    customer.addRental({title:"Star Wars", priceCode: MOVIE_CATEGORY.NEW_RELEASE}, 6);
-    customer.addRental({title:"Sofia", priceCode: MOVIE_CATEGORY.CHILDRENS}, 7);
-    customer.addRental({title:"Inception", priceCode: MOVIE_CATEGORY.REGULAR}, 5);
+        let customer = new Customer("John Doe", [
+            new Rental(new Movie("Star Wars", MovieCategory.NEW_RELEASE), 6),
+            new Rental(new Movie("Sofia", MovieCategory.CHILDREN), 7),
+            new Rental(new Movie("Inception", MovieCategory.REGULAR), 5)]);
 
+        // customer.rentals.splice(1,1);
 
+        const expected = "Rental Record for John Doe\n"
+            + "	Star Wars	18.0\n"
+            + "	Sofia	7.5\n"
+            + "	Inception	6.5\n"
+            + "Amount owed is 32.0\n"
+            + "You earned 4 frequent renter points";
 
-    const expected = "Rental Record for John Doe\n"
-      + "	Star Wars	18.0\n"
-      + "	Sofia	7.5\n"
-      + "	Inception	6.5\n"
-      + "Amount owed is 32.0\n"
-      + "You earned 4 frequent renter points";
-
-      expect(customer.statement()).to.equal(expected);
-  });
+        let generator = new StatementGenerator();
+        expect(generator.statement(customer.name, customer.rentals)).to.equal(expected);
+    });
 });

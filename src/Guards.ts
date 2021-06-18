@@ -1,29 +1,30 @@
-function getPayAmount(marine: Marine): number {
-  let result: number;
-  if (!retrieveDeadStatus()) { // network call
-    if (marine != null) {
-      if (!marine.retired) {
-        if (marine.yearsService != null) {
-          result = marine.yearsService * 100;
-          if (marine.awards.length > 0) {
-            result += 1000;
-          }
-          if (marine.awards.length >= 3) {
-            result += 2000;
-          }
-          // much more logic here...
-        } else {
-          throw new Error("Any marine should have the years of service set");
-        }
-      } else result = retiredAmount();
-    } else {
-      throw new Error("Marine is null");
-    }
-  } else {
-    // some logic here
-    result = deadAmount();
+function computeRegularPay(marine: Marine) {
+  let result = marine.yearsService * 100;
+  if (marine.awards.length > 0) {
+    result += 1000;
   }
+  if (marine.awards.length >= 3) {
+    result += 2000;
+  }
+  // much more logic here...
   return result;
+}
+
+function getPayAmount(marine: Marine): number {
+  if (retrieveDeadStatus()) {
+    // some logic here
+    return deadAmount();
+  } // network call
+  if (marine == null) {
+    throw new Error("Marine is null");
+  }
+  if (marine.retired) {
+    return retiredAmount();
+  }
+  if (marine.yearsService == null) {
+    throw new Error("Any marine should have the years of service set");
+  }
+  return computeRegularPay(marine);
 }
 
 function retrieveDeadStatus(): boolean {

@@ -1,9 +1,9 @@
-function fibonacci(n: number): number[] {
-    if (n === 1) return [0];
-    if (n === 2) return [0, 1];
+function fibonacci(nn: number): number[] {
+    if (nn === 1) return [0];
+    if (nn === 2) return [0, 1];
 
     const items: number[] = [0, 1];
-    while (items.length < n) {
+    while (items.length < nn) {
         items.push(items[items.length - 2] + items[items.length - 1]);
     }
 

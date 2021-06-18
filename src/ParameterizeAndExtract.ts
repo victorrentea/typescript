@@ -10,21 +10,22 @@ export class ParameterizeAndExtract {
             }
         }
     }
-
-}
-
-class AnotherClass {
-
     public g(n: number) {
         console.log("Logic G");
+        this.common(n);
+    }
+
+    private common(n: number) {
         for (let j = 0; j < 3; j++) {
             if (n + j < 0) {
-                let x = "Code" +
-                    " " + j;
-                console.log(x);
+                console.log("Code " + j);
             } else {
                 throw new Error("BU!");
             }
         }
     }
+}
+
+class AnotherClass {
+
 }

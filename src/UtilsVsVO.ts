@@ -1,38 +1,43 @@
 class SearchEngine {
 
   public filterCarModels(criteria: CarSearchCriteria, models: CarModel[]): CarModel[] {
-    for (let i = 0; i < models.length; i++) {
-      if (!MathUtil.intervalsIntersect(models[i].startYear, models[i].endYear, criteria.startYear, criteria.endYear)) {
-        models.splice(i, 1);
-        i--;
-      }
-    }
+
+    let result = models.filter(model => new Interval(model.startYear, model.endYear).intersects(criteria.yearInterval));
+
     console.log("More filtering logic");
-    return models;
+    return result;
   }
 
   public applyCapacityFilter() {
-    console.log(MathUtil.intervalsIntersect(1000, 1600, 1250, 2000));
+    let interval = new Interval(1000, 1600);
+    // interval.end = 2;
+    console.log(interval.intersects(new Interval(1250, 2000)));
   }
 
 }
 
 function applyCapacityFilter() {
-  console.log(MathUtil.intervalsIntersect(1000, 1600, 1250, 2000));
+  console.log(new Interval(1000, 1600).intersects(new Interval(1250, 2000)));
 }
+// class PaginationOptions {
+// class TwoIntervals {
+class Interval {
+  constructor (public readonly start: number, public readonly end: number) {
+    if (start > end) throw new Error("start larger than end");
+  }
 
-class MathUtil {
-  static intervalsIntersect(start1: number, end1: number, start2: number, end2: number): boolean {
-    return start1 <= end2 && start2 <= end1;
+  intersects(other: Interval) {
+    return this.start <= other.end && other.start <= this.end;
   }
 }
 
+// class MathUtil {
 
+  // static intervalsIntersect({start1: number, end1: number, start2: number, end2: number}): boolean { // rau - headless
 class CarSearchCriteria {
-  constructor(public readonly startYear: number,
-              public readonly endYear: number,
-              public readonly make: string) {
-    if (startYear > endYear) throw new Error("start larger than end");
+  constructor(public readonly yearInterval: Interval,
+              public readonly make: string,
+              ) {
   }
 }
 
@@ -47,7 +52,7 @@ class CarModel {
   }
 }
 
-let criteria = new CarSearchCriteria(2014, 2018, "Ford");
+let criteria = new CarSearchCriteria(new Interval(2014, 2018), "Ford");
 let fordFocusMk2 = new CarModel("Ford", "Focus", 2012, 2016);
 // let models = filterCarModels(criteria, [fordFocusMk2]);
 // console.log(models);

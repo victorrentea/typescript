@@ -1,10 +1,25 @@
-export const MOVIE_CATEGORY = {
-    CHILDRENS: 2,
-    REGULAR: 0,
-    NEW_RELEASE: 1
-};
+
+export enum MovieCategory {
+    REGULAR = "REGULAR",
+    NEW_RELEASE = "NEW_RELEASE",
+    CHILDREN = "CHILDREN"
+    // ,    BABACI = "BABACI"
+}
 
 export class Movie {
-    public title: string;
-    public priceCode: number;
+    constructor(public readonly title: string,
+                public readonly category: MovieCategory) {
+        if (!category) throw new Error();
+    }
+
+    isNewRelease() {
+        return this.category == MovieCategory.NEW_RELEASE;
+    }
+}
+
+class MyException extends Error {
+
+    // public static withCode(code:CodEnum?=GENERAL, message:string):MyException {
+    //
+    // }
 }

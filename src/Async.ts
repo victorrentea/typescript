@@ -43,9 +43,15 @@ class User {
 async function getUser():Promise<User> {return new User();}
 async function sendEmail(email:string, subject:string):Promise<void> {}
 
-getUser()
-    .then((user: User) => {
-        return sendEmail(user.email, 'Welcome!');
-    }) // TODO what here  ?
+// getUser()
+//     .then((user: User) => {
+//         return sendEmail(user.email, 'Welcome!');
+//     }).catch()
     ;
+
+// try {
+//     let user = await getUser();
+//     let data = await sendEmail(user.email, 'Welcome!');
+// } catch (e) {
+// }
 // TODO async await

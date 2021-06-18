@@ -25,8 +25,13 @@ class QueryBuilder {
 // ...
 
 const queryBuilder = new QueryBuilder();
-queryBuilder.from('users');
-queryBuilder.page(1, 100);
-queryBuilder.orderBy('firstName', 'lastName');
+
+function ff(queryBuilder:QueryBuilder) {
+    queryBuilder.from('users');
+    queryBuilder.page(1, 100);
+    queryBuilder.orderBy('firstName', 'lastName');
+}
+
+ff(queryBuilder);
 
 const query = queryBuilder.build();
