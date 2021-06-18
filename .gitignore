@@ -1,0 +1,6 @@
+node_modules/
+.nyc_output/
+coverage/
+# Project exclude paths
+/tests/game.test.js
+/tests/VideoStore.test.js
