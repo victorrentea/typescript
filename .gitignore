@@ -5,3 +5,4 @@ coverage/
 /tests/game.test.js
 /tests/VideoStore.test.js
 .idea
+/build/**.js*
