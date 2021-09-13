@@ -1,8 +1,8 @@
 import {expect} from 'chai';
 import {describe, it} from 'mocha';
-import {Movie, MovieCategory} from "../src/Movie";
-import {Customer, Rental} from "../src/Customer";
-import {StatementGenerator} from "../src/StatementGenerator";
+import {Movie, MovieCategory} from "../src/cleancode/Movie";
+import {Customer, Rental} from "../src/cleancode/Customer";
+import {StatementGenerator} from "../src/cleancode/StatementGenerator";
 
 
 describe('Videostore', () => {

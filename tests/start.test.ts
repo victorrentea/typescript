@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {describe, it} from 'mocha';
-import {GameRunner} from '../src/game-runner';
-import {calculateOrderPrice} from "../src/SplitPhase2";
+import {GameRunner} from '../src/cleancode/game-runner';
+import {calculateOrderPrice} from "../src/cleancode/SplitPhase2";
 
 
 describe('The test environment', () => {

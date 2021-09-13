@@ -1,10 +1,10 @@
 {
   "name": "trivia",
   "version": "1.0.0",
-  "description": "Trivia kata in typescript",
-  "main": "src/game-runner.ts",
+  "description": "DDD in ts",
+  "main": "src/ddd/Order.ts",
   "scripts": {
-    "start": "ts-node src/game-runner.ts",
+    "start": "ts-node src/ddd/Order.ts",
     "test": "nyc mocha --recursive --require ts-node/register \"tests/**/*.test.ts\""
   },
   "nyc": {
