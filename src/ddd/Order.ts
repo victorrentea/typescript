@@ -13,10 +13,8 @@ export class Order { // Aggregate Root ====== DDD
     }
 
     public addOrderLine(lineToAdd: OrderLine) {
-    // public addOrderLine(product: Product, count: number) {
         let existingLine = this._orderLines.find(line => line.product.equals(lineToAdd.product));
         if (existingLine) {
-            // existingLine.count += lineToAdd.count;
             this.removeOrderLine(existingLine);
             let newCount = lineToAdd.count + existingLine.count;
             this.addOrderLine(new OrderLine(lineToAdd.product, newCount));
