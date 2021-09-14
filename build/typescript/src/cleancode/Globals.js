@@ -10,11 +10,11 @@
 //         return this.filter(elem => !hash.has(elem));
 //     };
 // }
-
 // ----------------- GOOD: ---------------
-class MyArray<T> extends Array<T> {
-    diff(other: T[]): T[] {
+class MyArray extends Array {
+    diff(other) {
         const hash = new Set(other);
         return this.filter(elem => !hash.has(elem));
-    };
+    }
+    ;
 }

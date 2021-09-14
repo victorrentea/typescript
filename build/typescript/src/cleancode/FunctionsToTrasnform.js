@@ -1,18 +1,18 @@
-export class CombineFunctionsIntoTransform {
-    generateQRCode(code: string) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CombineFunctionsIntoTransform = void 0;
+class CombineFunctionsIntoTransform {
+    generateQRCode(code) {
         // Call External Service
         return "QR" + code;
     }
-
-    getAddress(eventId: number) {
+    getAddress(eventId) {
         // Call Repository
         return "Location Details of event " + eventId;
     }
-
-// ----------- a line -------------
-
-// TODO go through preserve Whole Object
-    generateTicket(ticket: Ticket) {
+    // ----------- a line -------------
+    // TODO go through preserve Whole Object
+    generateTicket(ticket) {
         let invoice = "Invoice for " + ticket.customerName + "\n";
         invoice += "QR Code: " + this.generateQRCode(ticket.code) + "\n";
         invoice += "Address: " + this.getAddress(ticket.eventId) + "\n";
@@ -21,11 +21,7 @@ export class CombineFunctionsIntoTransform {
         return invoice;
     }
 }
-
-
+exports.CombineFunctionsIntoTransform = CombineFunctionsIntoTransform;
 // ----- SUPPORTING, DUMMY CODE ------
 class Ticket {
-    public customerName: string;
-    public code: string;
-    public eventId: number;
 }

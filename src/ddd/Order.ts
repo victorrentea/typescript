@@ -1,5 +1,5 @@
 enum OrderStatus {
-    DRAFT="DRAFT",
+    DRAFT="DRAFT", // in cart
     PLACED="PLACED",
     SHIPPED="SHIPPED",
 }
@@ -66,7 +66,7 @@ export class Order { // Aggregate Root ====== DDD
         // orderLines.forEach(line => this.addOrderLine(line));
         // orderLines.forEach(this.addOrderLine, this);
         for (const orderLine of orderLines) {
-            this.addOrderLine(orderLine);
+            this.addProduct(orderLine.productId, orderLine.price, orderLine.count); // Hint: putem reveni la addProduct(OrderLine) din nou; TODO :)
         }
     }
     get status(): OrderStatus {
@@ -82,6 +82,7 @@ export class Order { // Aggregate Root ====== DDD
         }
         this._status = OrderStatus.SHIPPED;
         this._shipDate = new Date();
+
         // TODO emit OrderPlacedEvent(id) > ce credeti ca urmeaza:
         // a)  (mai lightweight)
         // b) pui intr-un queue
@@ -104,14 +105,17 @@ export class Order { // Aggregate Root ====== DDD
         return this._totalPrice;
     }
 
-    public addOrderLine(lineToAdd: OrderLine) {
-        let existingLine = this._orderLines.find(line => line.product.equals(lineToAdd.product));
+
+    public addProduct(productId: string, price:number, count: number) {
+        if (this.status == OrderStatus.PLACED) throw new Error("Order is frozen");
+
+        let existingLine = this._orderLines.find(line => line.productId === productId);
         if (existingLine) {
-            this._orderLines.splice(this._orderLines.findIndex(line => line.equals(existingLine)),1);
-            let newCount = lineToAdd.count + existingLine.count;
-            this.addOrderLine(new OrderLine(lineToAdd.product, newCount));
+            this._orderLines.splice(this._orderLines.findIndex(line => line.equals(existingLine)), 1);
+            let newCount = count + existingLine.count;
+            this._orderLines.push(new OrderLine(productId, price, newCount));
         } else {
-            this._orderLines.push(lineToAdd);
+            this._orderLines.push(new OrderLine(productId, price, count));
         }
         this._totalPrice = this.computeTotalPrice();
     }
@@ -127,24 +131,56 @@ export class Order { // Aggregate Root ====== DDD
         this._orderLines.splice(this._orderLines.findIndex(line => line.equals(lineToRemove)),1);
         this._totalPrice = this.computeTotalPrice();
     }
+
+    // public place() {
+    // TODO reevaluate prices. assign and freeze order.
+    //     status =
+    //     placeDate=
+    //     publish(new OrdeRPlacedEvent(id));
+    // }
+}
+class OrderCSVExporter {
+    public export(line: OrderLine, productMap ) {
+        let productVO = productMap[line.productId]
+        // let ol: OrderLine = new OrderLine();
+
+        //solutia1: +1 call --> poate lovi performanta
+        // let product = productService.getProduct(ol.productId);
+
+        //solutia2: denormalizare (clonare de date) --> poate cauza inconsistente.
+        // ol.product.name
+        // let csvLine = ol.productId + ";" + ol.product.name + ";";
+    }
+}
+class ProductVO {
+    constructor(
+        private readonly id: number,
+        private readonly name: string,
+        private readonly price: number,
+                ) {
+    }
 }
 export class OrderLine {// child Entity, part of the Order Aggregate
-    constructor(public product: Product, // TODO BUBA
+    // constructor(public readonly product: ProductVO,
+    constructor(public readonly productId: string, // TODO BUBA
+                public readonly productPrice: number,
+                // public readonly productName: number,
                 public readonly count: number) {
         if (count <= 0) {
             throw new Error("Count must be > 0")
         }
-        if (!product) {
+        if (!productId) {
             throw new Error("Product must be set");
         }
     }
+
     get price() { // pure function
-        return this.count * this.product.price;
+        return this.count * this.productPrice;
     }
 
     public equals(other: OrderLine) {
         return other.count === this.count &&
-            other.product.equals(this.product);
+            other.productId === this.productId;
     }
 }
 
@@ -178,7 +214,7 @@ class TestData { // Object Mother
     //     this.aValidOrder().place().ship();
     // }
     public static aValidOrder(object: Object):Order {
-        let orderLine = new OrderLine(new Product("P1", 10), 2);
+        let orderLine = new OrderLine("P1",10,  2);
         return Object.assign(new Order([orderLine]), object);
     }
 }
@@ -190,21 +226,65 @@ console.log(order1.totalPrice)
 
 
 
-let orderLine = new OrderLine(new Product("P1", 10), 2);
+let orderLine = new OrderLine("P1", 10, 2);
 let order = new Order([orderLine]);
 
 
-let product = new Product("P2", 3);
-orderLine = new  OrderLine(product, 3);
-order.addOrderLine(orderLine);
+// orderLine = new  OrderLine("P2", 3, 3);
+order.addProduct("P2", 3, 3);
 
 // order.orderLines[0].addCount(1);
 
-order.addOrderLine(new OrderLine(product, 1));
+order.addProduct("P2",4,  1); // price is silently set to 4.
 
 
 
 console.log(order.totalPrice)
+
+
+interface OrderRepo {
+    findById(orderId: number): Order;
+}
+interface PriceService {
+    findPriceFor(productId: string): number;
+}
+
+// stateless, nu au decat dependinte la alt ob stateless (Service,Repo..)
+export class OrderApplicationService { // Application Service < AS
+    constructor(private readonly orderService:OrderService,
+                private readonly orderRepo: OrderRepo,
+                private readonly priceService: PriceService) {
+    }
+    public addProductToOrder(orderId: number, productId: string, count:number) { // api unic, fara pret!
+        let order:Order = this.orderRepo.findById(orderId);
+
+        let price = this.priceService.findPriceFor(productId); // REST call -- uneori facut degeaba // daca ai heavy caching nu-ti pasa.
+
+        order.addProduct(productId, price, count);
+
+
+    }
+}
+
+class OrderPlacedEvent {
+}
+
+export class OrderService { // Domain Service < DS
+    constructor(orderRepo: OrderRepo, messageSender, emailSender,altServiciu) {
+    }
+    //Event Handler aka Fire and Forget
+    public onOrderPlaced(orderPlacedEvent: OrderPlacedEvent):void {
+
+    }
+    public bizLogic(param) {
+
+    }
+    public placeOrder(order: Order) {
+        // let date = alteServiciiExterne.call();
+        // order.place(date);
+        // repo.save(order);
+    }
+}
 
 
 // order.orderLines.splice()

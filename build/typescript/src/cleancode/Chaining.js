@@ -1,40 +1,32 @@
 class QueryBuilder {
-    private collection: string;
-    private pageNumber: number = 1;
-    private itemsPerPage: number = 100;
-    private orderByFields: string[] = [];
-
-    from(collection: string): this {
+    constructor() {
+        this.pageNumber = 1;
+        this.itemsPerPage = 100;
+        this.orderByFields = [];
+    }
+    from(collection) {
         this.collection = collection;
         return this;
     }
-
-    page(number: number, itemsPerPage: number = 100): this {
+    page(number, itemsPerPage = 100) {
         this.pageNumber = number;
         this.itemsPerPage = itemsPerPage;
         return this;
     }
-
-    orderBy(...fields: string[]): this {
+    orderBy(...fields) {
         this.orderByFields = fields;
         return this;
     }
-
-    build()/*: Query*/ {
+    build() {
         // ...
     }
 }
-
 // ...
-
 const queryBuilder = new QueryBuilder();
-
-function ff(queryBuilder:QueryBuilder) {
+function ff(queryBuilder) {
     queryBuilder.from('users')
         .page(1, 100)
         .orderBy('firstName', 'lastName');
 }
-
 ff(queryBuilder);
-
 const query = queryBuilder.build();

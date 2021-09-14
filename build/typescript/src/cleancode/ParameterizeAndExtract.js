@@ -1,31 +1,33 @@
-export class ParameterizeAndExtract {
-
-    public f(n: number) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ParameterizeAndExtract = void 0;
+class ParameterizeAndExtract {
+    f(n) {
         console.log("Logic F");
         for (let i = 0; i < 4; i++) {
             if (n + i < 0) {
                 console.log("Code " + i);
-            } else {
+            }
+            else {
                 throw new Error("BU!");
             }
         }
     }
-    public g(n: number) {
+    g(n) {
         console.log("Logic G");
         this.common(n);
     }
-
-    private common(n: number) {
+    common(n) {
         for (let j = 0; j < 3; j++) {
             if (n + j < 0) {
                 console.log("Code " + j);
-            } else {
+            }
+            else {
                 throw new Error("BU!");
             }
         }
     }
 }
-
+exports.ParameterizeAndExtract = ParameterizeAndExtract;
 class AnotherClass {
-
 }
