@@ -262,11 +262,26 @@ interface PriceService {
     findPriceFor(productId: ProductId): number;
 }
 
+
+export class OrderController {
+    constructor(private orderRepo:OrderRepo) {
+
+    }
+
+    // public getOrder(id:number):Order {
+    //     return this.orderRepo.findById(id);
+    // }
+}
 // stateless, nu au decat dependinte la alt ob stateless (Service,Repo..)
-export class OrderApplicationService { // Application Service < AS
+export class OrderApplicationService { // Application Service < AS // FACADE
     constructor(private readonly orderService:OrderService,
                 private readonly orderRepo: OrderRepo,
                 private readonly priceService: PriceService) {
+    }
+
+    public findOrderById(id:number): Order {
+        // return this.orderService.findOrderById(id);
+        return this.orderRepo.findById(id);
     }
     public addProductToOrder(orderId: number, productId: ProductId, count:number) { // api unic, fara pret!
         let order:Order = this.orderRepo.findById(orderId);
@@ -274,16 +289,11 @@ export class OrderApplicationService { // Application Service < AS
         let price = this.priceService.findPriceFor(productId); // REST call -- uneori facut degeaba // daca ai heavy caching nu-ti pasa.
 
         order.addProduct(productId, price, count);
-
-
     }
 }
 
-class OrderPlacedEvent {
-}
-
 export class OrderService { // Domain Service < DS
-    constructor(orderRepo: OrderRepo, messageSender, emailSender,altServiciu) {
+    constructor(private orderRepo: OrderRepo, messageSender, emailSender,altServiciu) {
     }
     //Event Handler aka Fire and Forget
     public onOrderPlaced(orderPlacedEvent: OrderPlacedEvent):void {
@@ -297,6 +307,13 @@ export class OrderService { // Domain Service < DS
         // order.place(date);
         // repo.save(order);
     }
+    //
+    // findOrderById(id: number) {
+    //     return this.orderRepo.findById(id);
+    // }
+}
+
+class OrderPlacedEvent {
 }
 
 
