@@ -10,6 +10,10 @@ export  class OrderBilling {
         public readonly country:string,
         public readonly VATCode:string ) {
     }
+
+    get euVATCode() {
+        return this.country + this.VATCode;
+    }
 }
 interface Repo {}
 
@@ -44,7 +48,8 @@ export class Order { // Aggregate Root ====== DDD
     private _shipDate: Date;
 
 
-    // private billing: OrderBilling;
+    // @OneToOne
+    // public billing: OrderBilling;
 
     // public setOrderLineCount(product:Product, newCount:number, repo:OrderLineRepo) { // okish
     //     if (status nu e bun) {
@@ -106,7 +111,7 @@ export class Order { // Aggregate Root ====== DDD
     }
 
 
-    public addProduct(productId: string, price:number, count: number) {
+    public addProduct(productId: ProductId, price:number, count: number) {
         if (this.status == OrderStatus.PLACED) throw new Error("Order is frozen");
 
         let existingLine = this._orderLines.find(line => line.productId === productId);
@@ -141,7 +146,7 @@ export class Order { // Aggregate Root ====== DDD
 }
 class OrderCSVExporter {
     public export(line: OrderLine, productMap ) {
-        let productVO = productMap[line.productId]
+        // let productVO = productMap[line.productId]
         // let ol: OrderLine = new OrderLine();
 
         //solutia1: +1 call --> poate lovi performanta
@@ -160,9 +165,17 @@ class ProductVO {
                 ) {
     }
 }
+export class ProductId { // ID type
+    constructor(public readonly id?: string) {
+        if (!id) {
+            // id= newUUID
+        }
+    }
+}
+new ProductId();
 export class OrderLine {// child Entity, part of the Order Aggregate
     // constructor(public readonly product: ProductVO,
-    constructor(public readonly productId: string, // TODO BUBA
+    constructor(public readonly productId: ProductId,
                 public readonly productPrice: number,
                 // public readonly productName: number,
                 public readonly count: number) {
@@ -214,7 +227,7 @@ class TestData { // Object Mother
     //     this.aValidOrder().place().ship();
     // }
     public static aValidOrder(object: Object):Order {
-        let orderLine = new OrderLine("P1",10,  2);
+        let orderLine = new OrderLine(new ProductId("P1"),10,  2);
         return Object.assign(new Order([orderLine]), object);
     }
 }
@@ -226,16 +239,16 @@ console.log(order1.totalPrice)
 
 
 
-let orderLine = new OrderLine("P1", 10, 2);
+let orderLine = new OrderLine(new ProductId("P1"), 10, 2);
 let order = new Order([orderLine]);
 
 
 // orderLine = new  OrderLine("P2", 3, 3);
-order.addProduct("P2", 3, 3);
+order.addProduct(new ProductId("P2"), 3, 3);
 
 // order.orderLines[0].addCount(1);
 
-order.addProduct("P2",4,  1); // price is silently set to 4.
+order.addProduct(new ProductId("P2"),4,  1); // price is silently set to 4.
 
 
 
@@ -246,7 +259,7 @@ interface OrderRepo {
     findById(orderId: number): Order;
 }
 interface PriceService {
-    findPriceFor(productId: string): number;
+    findPriceFor(productId: ProductId): number;
 }
 
 // stateless, nu au decat dependinte la alt ob stateless (Service,Repo..)
@@ -255,7 +268,7 @@ export class OrderApplicationService { // Application Service < AS
                 private readonly orderRepo: OrderRepo,
                 private readonly priceService: PriceService) {
     }
-    public addProductToOrder(orderId: number, productId: string, count:number) { // api unic, fara pret!
+    public addProductToOrder(orderId: number, productId: ProductId, count:number) { // api unic, fara pret!
         let order:Order = this.orderRepo.findById(orderId);
 
         let price = this.priceService.findPriceFor(productId); // REST call -- uneori facut degeaba // daca ai heavy caching nu-ti pasa.
