@@ -21,7 +21,7 @@ function applyCapacityFilter() {
 }
 // class PaginationOptions {
 // class TwoIntervals {
-class Interval {
+export class Interval {
   constructor (public readonly start: number, public readonly end: number) {
     if (start > end) throw new Error("start larger than end");
   }
@@ -30,6 +30,18 @@ class Interval {
     return this.start <= other.end && other.start <= this.end;
   }
 }
+
+export class IntervalInterface {
+  public readonly start: number;
+  public readonly end: number;
+
+  intersects(other: Interval) {
+    return this.start <= other.end && other.start <= this.end;
+  }
+}
+
+
+
 
 // class MathUtil {
 
@@ -56,5 +68,8 @@ let criteria = new CarSearchCriteria(new Interval(2014, 2018), "Ford");
 let fordFocusMk2 = new CarModel("Ford", "Focus", 2012, 2016);
 // let models = filterCarModels(criteria, [fordFocusMk2]);
 // console.log(models);
+
+
+
 
 

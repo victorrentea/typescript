@@ -40,18 +40,20 @@ downloadPage('https://en.wikipedia.org/wiki/Robert_Cecil_Martin', 'article.html'
 class User {
     email:string
 }
-async function getUser():Promise<User> {return new User();}
+async function getUser():Promise<User> {return  new User();}
 async function sendEmail(email:string, subject:string):Promise<void> {}
 
-// getUser()
-//     .then((user: User) => {
-//         return sendEmail(user.email, 'Welcome!');
-//     }).catch()
+getUser()
+    .then((user: User) => sendEmail(user.email, 'Welcome!'))
+    .catch(err => {})
     ;
 
-// try {
-//     let user = await getUser();
-//     let data = await sendEmail(user.email, 'Welcome!');
-// } catch (e) {
-// }
+const f = async () => {
+    try {
+        let user = await getUser();
+        let data = await sendEmail(user.email, 'Welcome!');
+        // set(user, date);
+    } catch (e) {
+    }
+};
 // TODO async await

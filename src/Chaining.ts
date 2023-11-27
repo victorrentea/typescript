@@ -1,3 +1,8 @@
+class Query {
+    constructor(collection: string, pageNumber: number, itemsPerPage: number, orderByFields: string[]) {
+    }
+}
+
 class QueryBuilder {
     private collection: string;
     private pageNumber: number = 1;
@@ -22,6 +27,7 @@ class QueryBuilder {
 
     build()/*: Query*/ {
         // ...
+        return new Query(this.collection, this.pageNumber, this.itemsPerPage, this.orderByFields);
     }
 }
 
@@ -29,12 +35,12 @@ class QueryBuilder {
 
 const queryBuilder = new QueryBuilder();
 
-function ff(queryBuilder:QueryBuilder) {
+function usingFluentSetters(queryBuilder:QueryBuilder) {
     queryBuilder.from('users')
         .page(1, 100)
         .orderBy('firstName', 'lastName');
 }
 
-ff(queryBuilder);
+usingFluentSetters(queryBuilder);
 
 const query = queryBuilder.build();
