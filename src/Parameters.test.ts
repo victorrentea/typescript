@@ -4,7 +4,7 @@ import {createMenu} from "./Parameters";
 
 
 it('parameters', () => {
-    createMenu("Bar", "Foo", false);
+    createMenu(false, "Bar", "Foo");
     // console.log("Outside, after", config);
 
     expect(true).to.be.true;

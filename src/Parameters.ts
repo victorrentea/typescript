@@ -7,6 +7,6 @@
 //  - Object.assign(defaults, param)
 //  - {defaults, ...spread}
 
-export function createMenu(title, body, cancellable ) {
+export function createMenu(cancellable, title, body) {
     console.log("Inside: ", title, body, cancellable);
 }
