@@ -5,7 +5,8 @@
     "outDir": "build",
     "types": [
       "mocha"
-    ]
+    ],
+    "strict": true
   },
   "exclude": [
     "node_modules"
@@ -14,4 +15,3 @@
     "src/**/*"
   ]
 }
-

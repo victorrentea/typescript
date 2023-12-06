@@ -13,3 +13,5 @@ export function calculateOrderPrice(orderString: string, priceList: Map<string, 
 console.log(calculateOrderPrice("Chair-CHR 4", new Map([["CHR", 5]])));
 
 
+// TODO
+//  - security: use const regExpTest = new RegExp(/....../);
