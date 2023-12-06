@@ -1,4 +1,4 @@
-import {Rental} from "./Customer";
+import {Rental} from "./VideoStore";
 
 export class StatementGenerator {
 

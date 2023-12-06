@@ -12,6 +12,8 @@ function beforeLogic(a: number, b: number) {
     console.log("Complex Logic 1 " + a + " and " + b);
     console.log("Complex Logic 2 " + a);
     console.log("Complex Logic 3 " + a);
+
+
     console.log("Complex Logic 1 " + a + " and " + b);
     console.log("Complex Logic 2 " + a);
     console.log("Complex Logic 3 " + a);
