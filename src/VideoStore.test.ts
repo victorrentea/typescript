@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import {describe, it} from 'mocha';
-import {Customer, MOVIE_CATEGORY} from "../src/VideoStore";
+import {Customer, MOVIE_CATEGORY} from "./VideoStore";
 
 
 describe('Videostore', () => {

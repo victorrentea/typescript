@@ -4,7 +4,6 @@
   "description": "Trivia kata in typescript",
   "main": "src/trivia-runner.ts",
   "scripts": {
-    "start": "ts-node src/trivia-runner.ts",
     "test": "nyc mocha --recursive --require ts-node/register \"tests/**/*.test.ts\""
   },
   "nyc": {

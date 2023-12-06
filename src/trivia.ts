@@ -132,7 +132,7 @@ export class Trivia {
               console.log(this.players[this.currentPlayer] + " now has " +
               this.purses[this.currentPlayer] + " Gold Coins.");
       
-              var winner = this.didPlayerWin();
+              const winner = this.didPlayerWin();
               this.currentPlayer += 1;
               if (this.currentPlayer == this.players.length)
                 this.currentPlayer = 0;
@@ -154,7 +154,7 @@ export class Trivia {
             console.log(this.players[this.currentPlayer] + " now has " +
                 this.purses[this.currentPlayer] + " Gold Coins.");
       
-            var winner = this.didPlayerWin();
+            const winner = this.didPlayerWin();
       
             this.currentPlayer += 1;
             if (this.currentPlayer == this.players.length)
@@ -165,3 +165,25 @@ export class Trivia {
     }
 
 }
+
+
+function run(): void {
+    const game = new Trivia();
+    game.add("Chet");
+    game.add("Pat");
+    game.add("Sue");
+
+    let notAWinner;
+    do {
+
+        game.roll(Math.floor(Math.random() * 6) + 1);
+    
+        if (Math.floor(Math.random() * 10) == 7) {
+        notAWinner = game.wrongAnswer();
+        } else {
+        notAWinner = game.wasCorrectlyAnswered();
+        }
+    
+    } while (notAWinner);
+}
+run();

@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import {it} from 'mocha';
-import {createMenu} from "../src/Parameters";
+import {createMenu} from "./Parameters";
 
 
 it('parameters', () => {
