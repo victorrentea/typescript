@@ -1,33 +1,31 @@
-function computeRegularPay(marine: Marine) {
-  let result = marine.yearsService * 100;
-  if (marine.awards.length > 0) {
-    result += 1000;
+function getPayAmount(marine: Marine,  bonusPackage: BonusPackage): number {
+  let result: number;
+  if (marine != null && (bonusPackage.value > 100 || bonusPackage.value < 10)) {
+    if (!retrieveDeadStatus(marine)) {
+      if (!marine.retired) {
+        if (marine.yearsService != null) {
+          result = marine.yearsService * 100 + bonusPackage.value;
+          if (marine.awards && marine.awards.length !== 0) { 
+            result += 1000;
+          }
+          if (marine.awards && marine.awards.length >= 3) {
+            result += 2000;
+          }
+          // HEAVY core logic here, business-rules ...
+        } else {
+          throw new Error("Any marine should have the years of service set");
+        }
+      } else result = retiredAmount();
+    } else {
+      result = deadAmount();
+    }
+  } else {
+    throw new Error("Not applicable!");
   }
-  if (marine.awards.length >= 3) {
-    result += 2000;
-  }
-  // much more logic here...
   return result;
 }
 
-function getPayAmount(marine: Marine): number {
-  if (retrieveDeadStatus()) {
-    // some logic here
-    return deadAmount();
-  } // network call
-  if (marine == null) {
-    throw new Error("Marine is null");
-  }
-  if (marine.retired) {
-    return retiredAmount();
-  }
-  if (marine.yearsService == null) {
-    throw new Error("Any marine should have the years of service set");
-  }
-  return computeRegularPay(marine);
-}
-
-function retrieveDeadStatus(): boolean {
+function retrieveDeadStatus(marine:Marine): boolean {
   // after 500 millis
   return false;
 }
@@ -41,18 +39,12 @@ function retiredAmount(): number {
 }
 
 
-class Marine {
-  constructor(
-    public readonly dead: boolean,
-    public readonly retired: boolean,
-    public readonly awards: Award[],
-    public readonly yearsService?: number,
-  ) {
-
-  }
-
-
+type Marine ={ dead: boolean,
+     retired: boolean,
+     awards: Award[],
+     yearsService?: number
 }
+type BonusPackage  = {value: number}
 
 class Award {
 

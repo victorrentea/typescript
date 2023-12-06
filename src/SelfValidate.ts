@@ -1,9 +1,9 @@
 export class Customer{
     private _name:string;
     constructor(_name:string) {
-        // if (!_name) {
-        //     throw new Error();
-        // }
+        if (!_name) {
+            throw new Error();
+        }
         this.name = _name;
     }
     get name() {
@@ -17,14 +17,11 @@ export class Customer{
     }
 
 }
-let customer = new Customer("John");
-
+const customer = new Customer("John");
 
 customer.name="Altu";
 customer.name=null;
-let customer2 = new Customer(null);
-// let customer3 = new Customer();
-
+const customer2 = new Customer(null);
 
 
 interface MyDtoPrimitDeLaServer {
@@ -34,4 +31,4 @@ interface MyDtoPrimitDeLaServer {
 
 
 let v:MyDtoPrimitDeLaServer;
-// v.a="suprizA";
+// v.a="suprizA"; // does not compile

@@ -1,8 +1,8 @@
-import {Game} from './game';
+import {Trivia} from './trivia';
 
-export class GameRunner {
+export class TriviaRunner {
     public static main(): void {
-        const game = new Game();
+        const game = new Trivia();
         game.add("Chet");
         game.add("Pat");
         game.add("Sue");
@@ -22,6 +22,6 @@ export class GameRunner {
     }
 }
 
-GameRunner.main();
+TriviaRunner.main();
 
   

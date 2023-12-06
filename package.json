@@ -2,9 +2,9 @@
   "name": "trivia",
   "version": "1.0.0",
   "description": "Trivia kata in typescript",
-  "main": "src/game-runner.ts",
+  "main": "src/trivia-runner.ts",
   "scripts": {
-    "start": "ts-node src/game-runner.ts",
+    "start": "ts-node src/trivia-runner.ts",
     "test": "nyc mocha --recursive --require ts-node/register \"tests/**/*.test.ts\""
   },
   "nyc": {
@@ -35,12 +35,27 @@
   "devDependencies": {
     "@types/chai": "^4.2.18",
     "@types/mocha": "^8.2.2",
-    "@types/node": "^15.12.2",
+    "@types/node": "^20.10.3",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
     "chai": "^4.1.2",
     "mocha": "^5.2.0",
     "nyc": "^12.0.2",
     "request": "^2.88.2",
     "sinon": "^6.1.3",
     "ts-node": "^7.0.0"
+  },
+  "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "extends": [
+      "plugin:@typescript-eslint/recommended"
+    ],
+    "rules": {
+      "@typescript-eslint/no-unused-vars": "off",
+      "//@typescript-eslint/no-explicit-any": "off"
+    }
   }
 }

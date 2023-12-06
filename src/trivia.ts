@@ -1,4 +1,4 @@
-export class Game {
+export class Trivia {
 
     private players: Array<string> = [];
     private places: Array<number> = [];

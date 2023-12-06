@@ -1,16 +1,16 @@
 function parse(orderString: string) {
-    let orderData = orderString.split(/\s+/);
-    let code = orderData[0].split("-")[1];
-    let itemCount = Number(orderData[1]);
-    let parsed = new ParsedOrderLine(code, itemCount);
+    const orderData = orderString.split(/\s+/);
+    const code = orderData[0].split("-")[1];
+    const itemCount = Number(orderData[1]);
+    const parsed = new ParsedOrderLine(code, itemCount);
     return parsed;
 }
 
 export function calculateOrderPrice(orderString:string,  priceList: Map<string, number>):number {
-    let parsed = parse(orderString);
+    const parsed = parse(orderString);
 
-    let productPrice = priceList.get(parsed.code);
-    let orderLine = new OrderLine(productPrice, parsed.itemCount);
+    const productPrice = priceList.get(parsed.code);
+    const orderLine = new OrderLine(productPrice, parsed.itemCount);
 
     return orderLine.getPrice();
 }

@@ -6,3 +6,6 @@ Trivia kata in typescript
 3. Run the tests with this command: `npm test`
 
     Any test source matching the pattern `*.test.ts` below `tests/` will be executed.
+
+
+ts-node src/
