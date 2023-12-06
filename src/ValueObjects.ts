@@ -37,8 +37,8 @@ class CarSearchCriteria {
 }
 
 class CarModel {
-  constructor(public readonly make: string,
-              public readonly model: string,
+  constructor(public make: string,
+              public model: string,
               public readonly startYear: number,
               public readonly endYear: number) {
     if (startYear > endYear) {
@@ -47,8 +47,8 @@ class CarModel {
   }
 }
 
-let criteria = new CarSearchCriteria(2014, 2018, "Ford");
-let fordFocusMk2 = new CarModel("Ford", "Focus", 2012, 2016);
+const criteria = new CarSearchCriteria(2014, 2018, "Ford");
+const fordFocusMk2 = new CarModel("Ford", "Focus", 2012, 2016);
 fordFocusMk2.make = "Mertzan";
 // let models = filterCarModels(criteria, [fordFocusMk2]);
 // console.log(models);

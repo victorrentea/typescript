@@ -1,6 +1,7 @@
 export class Movie {
-  public title: string;
-  public priceCode: number;
+  constructor(
+    public title: string,
+    public priceCode: number) {}
 }
 
 export const MOVIE_CATEGORY = {
@@ -28,9 +29,9 @@ export class Customer {
 
     let result = "Rental Record for " + this.name + "\n";
     for (const r of this.rentals) {
-      let each = r.m;
+      const each = r.m;
       let thisAmount = 0;
-      let dr = r.d;
+      const dr = r.d;
       // determine amounts for each line
       switch (each.priceCode) {
         case MOVIE_CATEGORY.REGULAR:

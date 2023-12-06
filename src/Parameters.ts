@@ -1,3 +1,25 @@
+interface MenuConfig { // TIPIC: pt a mapa Dto de la BE
+    title: string;
+    body: string;
+    cancellable?: boolean;
+    image?: string;
+}
+interface PotSiEu extends MenuConfig {// ia uite ce pot sa fac, mai aproape de Java
+    iasi: string;
+}
+// vs 
+type MenuConfigType = { // TIPIC pt obiectele interne, sau poate ramai doar cu interface
+    title: string;
+    body: string;
+    cancellable?: boolean;
+    image?: string;
+};
+// 😡:
+type MenuConfigType2 = MenuConfigType & {iasi:string} // ia uite ce pot sa fac;
+
+// Cine formateaza datele pt UI: FE
+// Cine agrega datele pt UI: BE < PERFORMANCE STRIKES
+
 // TODO set defaults to the params
 //  - ||
 //  - ??
@@ -11,7 +33,7 @@
 // CRED!
 //  - punem tipul la return in semnatura doar daca nu e void
 //  - parametrii cheie sunt primii
-//  - nu vreau sa vad vreodata undefined venind pe param/atribute. ❤️null, 😡undefined
+//  - nu vreau sa vad vreodata undefined venind pe param/atribute. 💖null, 😡undefined
 // > undefined vine daca accesezi o prop care nu exista, sau un parametru care nu e dat, sau let x; < nu linteazea
 // > null vine in Dto din Backend de exemplu: {a: null, b: null}
 
@@ -19,12 +41,19 @@
 
 // dar initializam stateul cu  = undefined -@Adi ~redux
 
-export function createMenu(
-      title: string, 
-      body: string, 
-      cancellable = false, 
-      image = "na.jpg") {
+export function createMenu({ title, body, cancellable = false, image = "na.jpg" }: MenuConfig) {// 💖💖💖 za best
     console.log("Inside: ", title, body, cancellable, image);
+}
+
+export function createMenu2(c: MenuConfig) {
+    // c.cancellable = c.cancellable ?? false; // rau
+    // c.image = c.image ?? "na.jpg";
+    
+    // c = Object.assign({cancellable: false, image: "na.jpg"}, c); //😡
+
+    const { title, body, cancellable, image } = {cancellable: false, image: "na.jpg", ...c}; //💖 😉
+
+    console.log("InsideX: ", title, body, cancellable, image);
 }
 
 // null e o valoare, vs undefined e nimicul

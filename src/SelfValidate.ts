@@ -4,7 +4,7 @@ export class Customer{
         if (!_name) {
             throw new Error();
         }
-        this.name = _name;
+        this._name = _name;
     }
     get name() {
         return this._name;
