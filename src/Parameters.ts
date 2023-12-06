@@ -19,8 +19,12 @@
 
 // dar initializam stateul cu  = undefined -@Adi ~redux
 
-export function createMenu(title: string, body: string, cancellable = false) {
-    console.log("Inside: ", title, body, cancellable);
+export function createMenu(
+      title: string, 
+      body: string, 
+      cancellable = false, 
+      image = "na.jpg") {
+    console.log("Inside: ", title, body, cancellable, image);
 }
 
 // null e o valoare, vs undefined e nimicul
