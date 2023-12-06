@@ -16,6 +16,7 @@ function getPayAmount(marine: Marine,  bonusPackage: BonusPackage): number {
           throw new Error("Any marine should have the years of service set");
         }
       } else result = retiredAmount();
+      // this!!
     } else {
       result = deadAmount();
     }
