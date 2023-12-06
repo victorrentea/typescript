@@ -4,12 +4,12 @@
   "description": "Trivia kata in typescript",
   "main": "src/trivia-runner.ts",
   "scripts": {
-    "test": "nyc mocha --recursive --require ts-node/register \"tests/**/*.test.ts\""
+    "test": "nyc mocha --recursive --require ts-node/register \"src/**/*.test.ts\""
   },
   "nyc": {
     "include": [
       "src/**/*.ts",
-      "tests/**/*.ts"
+      "src/**/*.test.ts"
     ],
     "exclude": [
       "typings"
