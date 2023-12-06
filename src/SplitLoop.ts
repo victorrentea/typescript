@@ -8,7 +8,7 @@ export type Employee = {
 
 export function computeStatsHard(employees: Employee[], retrieveSalary: (employeeId: number) => number): string {
     let totalEmpAge: number = 0;
-    let totalConsultantSalary: number = 0;
+    const consultantsPaidOver3K: Employee[] = [];
     for (const employee of employees) {
         if (!employee.isConsultant) {
             totalEmpAge += employee.age;
@@ -25,17 +25,16 @@ export function computeStatsHard(employees: Employee[], retrieveSalary: (employe
                 employee.salary = salary;
             }
         }
-        totalConsultantSalary += employee.salary;
+        if (employee.salary > 3000) {
+            consultantsPaidOver3K.push(employee);
+        }
     }
 
-    let averageAge: number = 0;
+    let averageEmpAge: number = 0;
     if (totalEmpAge != 0) {
-        averageAge = totalEmpAge / employees.filter(e => !e.isConsultant).length;
+        averageEmpAge = totalEmpAge / employees.filter(e => !e.isConsultant).length;
     }
-    let averageConsultantSalary: number = 0;
-    if (totalConsultantSalary != 0) {
-        averageConsultantSalary = totalConsultantSalary / employees.length;
-    }
-    return "Average employee age = " + averageAge + "; Average consultant salary = " + averageConsultantSalary;
+    console.log("some logic with ", consultantsPaidOver3K);
+    return "Average employee age = " + averageEmpAge;
 }
 
