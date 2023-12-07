@@ -8,6 +8,9 @@ function getPayAmount(marine: Marine,  bonusPackage: BonusPackage): number {
     }
     if (marine.retired) return retiredAmount();
 
+    // if (marine.yearsService = null) { // in C atribuie la null, si iful nu executa ca 0 inseamna false, deci hai sa punem pe dos:
+    // if (null = marine.yearsService) {
+      
     if (marine.yearsService == null) {
       throw new Error("Any marine should have the years of service set");
     }

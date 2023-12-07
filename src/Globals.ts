@@ -6,7 +6,7 @@ declare module 'wtf' {
     }
 }
 
-if (!Array.prototype.diff) {
+if (!Array.prototype.diff) { // cioaca! sarma! scoci! NU
     Array.prototype.diff = function <T>(other: T[]): T[] {
         const hash = new Set(other);
         return this.filter(elem => !hash.has(elem));

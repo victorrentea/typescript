@@ -1,30 +1,27 @@
+// x = new SearchEngine();
+// x.filterCarModels = 'tzeapa';
 class SearchEngine {
 
   public filterCarModels(criteria: CarSearchCriteria, models: CarModel[]): CarModel[] {
-    const filteredModels: CarModel[] = []; // Initialize an empty array to store the filtered models
-    for (let i = 0; i < models.length; i++) {
-      if (MathUtil.intervalsIntersect(models[i].startYear, models[i].endYear, criteria.startYear, criteria.endYear)) {
-        filteredModels.push(models[i]);
-      }
-    }
-    console.log("More filtering logic");
-    return filteredModels;
+    const criteriaInterval = new Interval(criteria.startYear, criteria.endYear);
+    return models.filter(it => new Interval(it.startYear, it.endYear).intersects(criteriaInterval));
   }
 
   public applyCapacityFilter() {
-    console.log(MathUtil.intervalsIntersect(1000, 1600, 1250, 2000));
+    console.log(new Interval(1000, 1600).intersects(new Interval(1250, 2000)));
   }
 
 }
 
-function applyCapacityFilter() {
-  console.log(MathUtil.intervalsIntersect(1000, 1600, 1250, 2000));
-}
-
-class MathUtil {
-  static intervalsIntersect(start1: number, end1: number, start2: number, end2: number): boolean {
-    return start1 <= end2 && start2 <= end1; // copiata cu grije din SO
-  }
+class Interval {
+  constructor(
+    public start: number,
+    public end: number) {
+      if (start > end) throw new Error("start larger than end");
+    }
+    
+  // 😏😎
+  intersects = (other: Interval)=> this.start <= other.end && other.start <= this.end
 }
 
 
@@ -48,6 +45,7 @@ class CarModel {
 }
 
 const criteria = new CarSearchCriteria(2014, 2018, "Ford");
+const criteriaDeTesterCreativ = new CarSearchCriteria(2022, 2019, "Ford");
 const fordFocusMk2 = new CarModel("Ford", "Focus", 2012, 2016);
 fordFocusMk2.make = "Mertzan";
 // let models = filterCarModels(criteria, [fordFocusMk2]);
