@@ -1,9 +1,4 @@
-interface MenuConfig { // TIPIC: pt a mapa Dto de la BE
-    title: string;
-    body: string;
-    cancellable?: boolean;
-    image?: string;
-}
+
 interface PotSiEu extends MenuConfig {// ia uite ce pot sa fac, mai aproape de Java
     iasi: string;
 }
@@ -16,6 +11,7 @@ type MenuConfigType = { // TIPIC pt obiectele interne, sau poate ramai doar cu i
 };
 // 😡:
 type MenuConfigType2 = MenuConfigType & {iasi:string} // ia uite ce pot sa fac;
+// 💖 vine eventu din JavraScript. cu atr 'selected' -> da tu pe TS nu vezi atr, da ti-l adaugi tu pe tip
 
 // Cine formateaza datele pt UI: FE
 // Cine agrega datele pt UI: BE < PERFORMANCE STRIKES
@@ -41,6 +37,12 @@ type MenuConfigType2 = MenuConfigType & {iasi:string} // ia uite ce pot sa fac;
 
 // dar initializam stateul cu  = undefined -@Adi ~redux
 
+interface MenuConfig { // TIPIC: pt a mapa Dto de la BE
+    title: string;
+    body: string;
+    cancellable?: boolean;
+    image?: string;
+}
 export function createMenu({ title, body, cancellable = false, image = "na.jpg" }: MenuConfig) {// 💖💖💖 za best
     console.log("Inside: ", title, body, cancellable, image);
 }
