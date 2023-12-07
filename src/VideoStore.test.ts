@@ -8,7 +8,7 @@ describe('Videostore', () => {
 
     const customer = new Customer("John Doe");
     customer.addRental({title:"Star Wars", priceCode: MOVIE_CATEGORY.NEW_RELEASE}, 6);
-    customer.addRental({title:"Sofia", priceCode: MOVIE_CATEGORY.CHILDRENS}, 7);
+    customer.addRental({title:"Sofia", priceCode: MOVIE_CATEGORY.CHILDREN}, 7);
     customer.addRental({title:"Inception", priceCode: MOVIE_CATEGORY.REGULAR}, 5);
 
     const expected = "Rental Record for John Doe\n"
@@ -18,6 +18,6 @@ describe('Videostore', () => {
       + "Amount owed is 32.0\n"
       + "You earned 4 frequent renter points";
 
-      expect(customer.statement()).to.equal(expected);
+      expect(customer.createStatement()).to.equal(expected);
   });
 });

@@ -1,67 +1,95 @@
-export class Movie {
-  constructor(
-    public title: string,
-    public priceCode: number) {}
+export enum MOVIE_CATEGORY {
+    CHILDREN,
+    REGULAR,
+    NEW_RELEASE
 }
 
-export const MOVIE_CATEGORY = {
-  CHILDRENS: 2,
-  REGULAR: 0,
-  NEW_RELEASE: 1
-};
+export class Movie {
+    constructor(
+        public readonly title: string,
+        public readonly priceCode: number
+    ) {
+    }
+}
 
+export class Rental {
+    constructor(
+        public readonly movie: Movie,
+        public readonly days: number
+    ) {
+    }
+
+    public computePoints() {
+        let frequentRenterPoints = 1;
+        // add bonus for a two day new release rental
+        if (this.days > 1 && this.movie.priceCode == MOVIE_CATEGORY.NEW_RELEASE)
+            frequentRenterPoints++;
+        return frequentRenterPoints;
+    }
+
+    public computePrice():number {
+        let amount: number;
+        switch (this.movie.priceCode) {
+            case MOVIE_CATEGORY.REGULAR:
+                amount = 2;
+                if (this.days > 2)
+                    amount += (this.days - 2) * 1.5;
+                return amount;
+            case MOVIE_CATEGORY.NEW_RELEASE:
+                return this.days * 3;
+            case MOVIE_CATEGORY.CHILDREN:
+                amount = 1.5;
+                if (this.days > 3)
+                    amount += (this.days - 3) * 1.5;
+                return amount;
+            default: throw new Error("Unknown price code: "+this.movie.priceCode);
+        }
+    }
+}
 
 export class Customer {
-  private name: string;
-  private rentals: any[] = [];
-
-  constructor(name: string) {
-    this.name = name;
-  }
-
-  public addRental(m: Movie, d: number) {
-    this.rentals.push({d: d, m: m});
-  }
-
-  public statement(): string {
-    let totalAmount: number = 0;
-    let frequentRenterPoints = 0;
-
-    let result = "Rental Record for " + this.name + "\n";
-    for (const r of this.rentals) {
-      const each = r.m;
-      let thisAmount = 0;
-      const dr = r.d;
-      // determine amounts for each line
-      switch (each.priceCode) {
-        case MOVIE_CATEGORY.REGULAR:
-          thisAmount += 2;
-          if (dr > 2)
-            thisAmount += (dr - 2) * 1.5;
-          break;
-        case MOVIE_CATEGORY.NEW_RELEASE:
-          thisAmount += dr * 3;
-          break;
-        case MOVIE_CATEGORY.CHILDRENS:
-          thisAmount += 1.5;
-          if (dr > 3)
-            thisAmount += (dr - 3) * 1.5;
-          break;
-      }
-      // add frequent renter points
-      frequentRenterPoints++;
-      // add bonus for a two day new release rental
-      if (each.priceCode != null &&
-          (each.priceCode == MOVIE_CATEGORY.NEW_RELEASE)
-          && dr > 1)
-        frequentRenterPoints++;
-      // show figures line for this rental
-      result += "\t" + each.title + "\t" + thisAmount.toFixed(1) + "\n";
-      totalAmount += thisAmount;
+    constructor(
+        private readonly name: string,
+        private readonly rentals: Array<Rental> = []) {
     }
-    // add footer lines
-    result += "Amount owed is " + totalAmount.toFixed(1) + "\n";
-    result += "You earned " + frequentRenterPoints + " frequent renter points";
-    return result;
-  }
+
+    public addRental(movie: Movie, days: number) {
+        this.rentals.push(new Rental(movie, days));
+    }
+
+    public createStatement = () => this.formatHeader() + this.formatBody() + this.formatFooter();
+
+    private formatBody() {
+        return this.rentals.map(rental => this.formatLine(rental)).join('');
+    }
+
+    private formatHeader() {
+        return `Rental Record for ${this.name}\n`;
+    }
+
+    private formatFooter() {
+        const totalAmount = this.computeTotalAmount();
+        const frequentRenterPoints = this.computeTotalPoints();
+        return `Amount owed is ${totalAmount.toFixed(1)}
+You earned ${frequentRenterPoints} frequent renter points`;
+    }
+
+    private computeTotalPoints() {
+        let frequentRenterPoints = 0;
+        for (const rental of this.rentals) {
+            frequentRenterPoints += rental.computePoints();
+        }
+        return frequentRenterPoints;
+    }
+
+    private computeTotalAmount = () => this.rentals
+          .map(rental => rental.computePrice())
+          .reduce((a, b) => a + b, 0);
+
+
+    private formatLine(rental: Rental) {
+        return `\t${rental.movie.title}\t${rental.computePrice().toFixed(1)}\n`;
+    }
+
+
 }
