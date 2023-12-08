@@ -21,30 +21,33 @@ export class Rental {
 
     public computePoints() {
         let frequentRenterPoints = 1;
-        // add bonus for a two day new release rental
-        if (this.days > 1 && this.movie.priceCode == MOVIE_CATEGORY.NEW_RELEASE)
+        if (this.days >= 2 && this.movie.priceCode == MOVIE_CATEGORY.NEW_RELEASE)
             frequentRenterPoints++;
         return frequentRenterPoints;
     }
 
-    public computePrice():number {
-        let amount: number;
+    public get price():number {
         switch (this.movie.priceCode) {
-            case MOVIE_CATEGORY.REGULAR:
-                amount = 2;
-                if (this.days > 2)
-                    amount += (this.days - 2) * 1.5;
-                return amount;
-            case MOVIE_CATEGORY.NEW_RELEASE:
-                return this.days * 3;
-            case MOVIE_CATEGORY.CHILDREN:
-                amount = 1.5;
-                if (this.days > 3)
-                    amount += (this.days - 3) * 1.5;
-                return amount;
+            case MOVIE_CATEGORY.REGULAR: return this.regularPrice();
+            case MOVIE_CATEGORY.NEW_RELEASE: return this.days * 3;
+            case MOVIE_CATEGORY.CHILDREN: return this.chlildrenPrice();
             default: throw new Error("Unknown price code: "+this.movie.priceCode);
         }
     }
+
+  private chlildrenPrice() {
+    let amount = 1.5;
+    if (this.days > 3)
+      amount += (this.days - 3) * 1.5;
+    return amount;
+  }
+
+  private regularPrice() {
+    let amount = 2;
+    if (this.days > 2)
+      amount += (this.days - 2) * 1.5;
+    return amount;
+  }
 }
 
 export class Customer {
@@ -83,12 +86,12 @@ You earned ${frequentRenterPoints} frequent renter points`;
     }
 
     private computeTotalAmount = () => this.rentals
-          .map(rental => rental.computePrice())
+          .map(rental => rental.price)
           .reduce((a, b) => a + b, 0);
 
 
     private formatLine(rental: Rental) {
-        return `\t${rental.movie.title}\t${rental.computePrice().toFixed(1)}\n`;
+        return `\t${rental.movie.title}\t${rental.price.toFixed(1)}\n`;
     }
 
 
