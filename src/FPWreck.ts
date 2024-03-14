@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {Order, Product, ProductCategory} from "./FPmodel";
+import {Order, OrderLine, Product, ProductCategory} from "./FPmodel";
 
 type ProductApi = {
     getHiddenProductIds(): number[];
@@ -17,21 +17,35 @@ export class FPWreck {
     }
 
     public getFrequentOrderedProducts(orders: Order[]): Product[] {
-		return Array.from(orders
+		const recentOrderLines = orders
 			.filter(order => order.active)
-			.filter(order => differenceInDays(new Date(), order.creationDate) < 365)
-			.flatMap(order => order.orderLines)
+			.filter(this.isRecent)
+			.flatMap(order => order.orderLines);
+
+		const productCounts = this.sumUpPurchasedProducts(recentOrderLines);
+		// sumValuesByKeys(map, ol=>ol.product, ol=>ol.itemCount)
+
+		const hiddenIds = await this.productApi.getHiddenProductIds();
+		return Array.from(productCounts.entries())
+			.filter(([, count]) => count >= 10)
+			.map(([product]) => product)
+			.filter(product => !product.isDeleted)
+			// .filter(product => !this.productApi.getHiddenProductIds().includes(product.id))
+			.filter(product => !hiddenIds.includes(product.id))
+			;
+	}
+
+	private sumUpPurchasedProducts(recentOrderLines: OrderLine[]) {
+		return recentOrderLines
 			.reduce((productCountMap, orderLine) => {
-				const product = orderLine.product;
-				const count = productCountMap.get(product) || 0;
-				productCountMap.set(product, count + orderLine.itemCount);
+				const oldCount = productCountMap.get(orderLine.product) || 0;
+				productCountMap.set(orderLine.product, oldCount + orderLine.itemCount);
 				return productCountMap;
-			}, new Map<Product, number>())
-			.entries())
-			.filter(([product, count]) => count >= 10)
-			.filter(([product]) => !product.isDeleted)
-			.filter(([product]) => !this.productApi.getHiddenProductIds().includes(product.id))
-			.map(([product]) => product);
+			}, new Map<Product, number>());
+	}
+
+	private isRecent(order: Order) {
+		return differenceInDays(new Date(), order.creationDate) < 365;
 	}
 }
 
@@ -41,6 +55,7 @@ it('should return frequent ordered products', () => {
 	};
 	const streamWreck = new FPWreck(productApi);
 	const p3 = {id: 3, isDeleted: false, category: ProductCategory.ELECTRONICS, isPremium: true};
+	let p1 = {id: 1, isDeleted: false, category: ProductCategory.ELECTRONICS, isPremium: true};
 	const orders: Order[] = [
 		{
 			creationDate: new Date('2024-01-01'),
@@ -48,11 +63,11 @@ it('should return frequent ordered products', () => {
 			price: 100,
 			orderLines: [
 				{
-					product: {id: 1, isDeleted: false, category: ProductCategory.ELECTRONICS, isPremium: true},
+					product: p1,
 					itemCount: 10
 				},
 				{
-					product: {id: 2, isDeleted: false, category: ProductCategory.ELECTRONICS, isPremium: true},
+					product: p1,
 					itemCount: 10
 				},
 				{
