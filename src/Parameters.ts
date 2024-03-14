@@ -6,7 +6,7 @@
 //  - config.title = config.title ||
 //  - Object.assign(defaults, param)
 //  - {defaults, ...spread}
-//  - explore tuples: let marks:[number, number] = [1, 2]; // tuple of 2 number values
+//  - ({title = 'Foo', ..}:MenuConfig) and MenuConfig = {title?: string, body?: string, cancellable?: boolean}
 
 import {it} from "mocha";
 import {expect} from "chai";
@@ -18,8 +18,6 @@ export function createMenu(cancellable: boolean, title: string, body: string) {
 
 it('parameters', () => {
     createMenu(false, "Bar", "Foo");
-    // console.log("Outside, after", config);
-
     expect(true).to.be.true;
 });
 

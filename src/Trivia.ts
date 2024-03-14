@@ -1,5 +1,6 @@
-export class Trivia {
+import {expect} from "chai";
 
+export class Trivia {
     private players: Array<string> = [];
     private places: Array<number> = [];
     private purses: Array<number> = [];
@@ -19,7 +20,7 @@ export class Trivia {
             this.scienceQuestions.push("Science Question " + i);
             this.sportsQuestions.push("Sports Question " + i);
             this.rockQuestions.push(this.createRockQuestion(i));
-          }
+        }
     }
 
     private createRockQuestion(index: number): string {
@@ -45,34 +46,34 @@ export class Trivia {
     public roll(roll: number) {
         console.log(this.players[this.currentPlayer] + " is the current player");
         console.log("They have rolled a " + roll);
-    
+
         if (this.inPenaltyBox[this.currentPlayer]) {
-          if (roll % 2 != 0) {
-            this.isGettingOutOfPenaltyBox = true;
-    
-            console.log(this.players[this.currentPlayer] + " is getting out of the penalty box");
+            if (roll % 2 != 0) {
+                this.isGettingOutOfPenaltyBox = true;
+
+                console.log(this.players[this.currentPlayer] + " is getting out of the penalty box");
+                this.places[this.currentPlayer] = this.places[this.currentPlayer] + roll;
+                if (this.places[this.currentPlayer] > 11) {
+                    this.places[this.currentPlayer] = this.places[this.currentPlayer] - 12;
+                }
+
+                console.log(this.players[this.currentPlayer] + "'s new location is " + this.places[this.currentPlayer]);
+                console.log("The category is " + this.currentCategory());
+                this.askQuestion();
+            } else {
+                console.log(this.players[this.currentPlayer] + " is not getting out of the penalty box");
+                this.isGettingOutOfPenaltyBox = false;
+            }
+        } else {
+
             this.places[this.currentPlayer] = this.places[this.currentPlayer] + roll;
             if (this.places[this.currentPlayer] > 11) {
-              this.places[this.currentPlayer] = this.places[this.currentPlayer] - 12;
+                this.places[this.currentPlayer] = this.places[this.currentPlayer] - 12;
             }
-    
+
             console.log(this.players[this.currentPlayer] + "'s new location is " + this.places[this.currentPlayer]);
             console.log("The category is " + this.currentCategory());
             this.askQuestion();
-          } else {
-            console.log(this.players[this.currentPlayer] + " is not getting out of the penalty box");
-            this.isGettingOutOfPenaltyBox = false;
-          }
-        } else {
-    
-          this.places[this.currentPlayer] = this.places[this.currentPlayer] + roll;
-          if (this.places[this.currentPlayer] > 11) {
-            this.places[this.currentPlayer] = this.places[this.currentPlayer] - 12;
-          }
-    
-          console.log(this.players[this.currentPlayer] + "'s new location is " + this.places[this.currentPlayer]);
-          console.log("The category is " + this.currentCategory());
-          this.askQuestion();
         }
     }
 
@@ -117,7 +118,7 @@ export class Trivia {
         console.log('Question was incorrectly answered');
         console.log(this.players[this.currentPlayer] + " was sent to the penalty box");
         this.inPenaltyBox[this.currentPlayer] = true;
-    
+
         this.currentPlayer += 1;
         if (this.currentPlayer == this.players.length)
             this.currentPlayer = 0;
@@ -127,41 +128,41 @@ export class Trivia {
     public wasCorrectlyAnswered(): boolean {
         if (this.inPenaltyBox[this.currentPlayer]) {
             if (this.isGettingOutOfPenaltyBox) {
-              console.log('Answer was correct!!!!');
-              this.purses[this.currentPlayer] += 1;
-              console.log(this.players[this.currentPlayer] + " now has " +
-              this.purses[this.currentPlayer] + " Gold Coins.");
-      
-              const winner = this.didPlayerWin();
-              this.currentPlayer += 1;
-              if (this.currentPlayer == this.players.length)
-                this.currentPlayer = 0;
-      
-              return winner;
+                console.log('Answer was correct!!!!');
+                this.purses[this.currentPlayer] += 1;
+                console.log(this.players[this.currentPlayer] + " now has " +
+                    this.purses[this.currentPlayer] + " Gold Coins.");
+
+                const winner = this.didPlayerWin();
+                this.currentPlayer += 1;
+                if (this.currentPlayer == this.players.length)
+                    this.currentPlayer = 0;
+
+                return winner;
             } else {
-              this.currentPlayer += 1;
-              if (this.currentPlayer == this.players.length)
-                this.currentPlayer = 0;
-              return true;
+                this.currentPlayer += 1;
+                if (this.currentPlayer == this.players.length)
+                    this.currentPlayer = 0;
+                return true;
             }
-      
-      
-          } else {
-      
+
+
+        } else {
+
             console.log("Answer was correct!!!!");
-      
+
             this.purses[this.currentPlayer] += 1;
             console.log(this.players[this.currentPlayer] + " now has " +
                 this.purses[this.currentPlayer] + " Gold Coins.");
-      
+
             const winner = this.didPlayerWin();
-      
+
             this.currentPlayer += 1;
             if (this.currentPlayer == this.players.length)
                 this.currentPlayer = 0;
-      
+
             return winner;
-          }
+        }
     }
 
 }
@@ -177,13 +178,24 @@ function run(): void {
     do {
 
         game.roll(Math.floor(Math.random() * 6) + 1);
-    
+
         if (Math.floor(Math.random() * 10) == 7) {
-        notAWinner = game.wrongAnswer();
+            notAWinner = game.wrongAnswer();
         } else {
-        notAWinner = game.wasCorrectlyAnswered();
+            notAWinner = game.wasCorrectlyAnswered();
         }
-    
+
     } while (notAWinner);
 }
-run();
+// run();
+
+it('console.log the text "hello"', () => {
+    const output:string[] = [];
+    const oldLog = console.log;
+    console.log = function (message) {
+        output.push(message);
+        oldLog(message);
+    };
+    console.log('hello');
+    expect(output).to.contain('hello');
+});
