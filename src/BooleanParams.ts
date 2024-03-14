@@ -9,16 +9,17 @@ bigUglyMethod(5, 1);
 bigUglyMethod(2, 1, true);
 
 
-function bigUglyMethod(b: number, a: number, boulean: boolean = false) {
-  console.log("Donkey Logic 1 " + a + " and " + b);
-  console.log("Donkey Logic 2 " + a);
-  console.log("Donkey Logic 3 " + a);
+// 100% safe changes: rename of a param, local const/let; extract a function
+function bigUglyMethod(discountCode: number, productCount: number, boulean: boolean = false) {
+  console.log("Donkey Logic 1 " + productCount + " and " + discountCode);
+  console.log("Donkey Logic 2 " + productCount);
+  console.log("Donkey Logic 3 " + productCount);
 
   if (boulean) {
-    console.log("Some stuff only for CR323 4 " + a);
+    console.log("Some stuff only for CR323 4 " + productCount);
   }
 
-  console.log("More Cow Logic " + b);
-  console.log("More Cow Logic2 " + b);
+  console.log("More Cow Logic " + discountCode);
+  console.log("More Cow Logic2 " + discountCode);
+  const x = 1;
 }
-

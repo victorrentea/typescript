@@ -51,3 +51,11 @@ whyAnySucks(customer);
 it("should throw runtime", () => {
     expect(() => whyAnySucks("string why not")).to.throw();
 });
+
+
+
+
+interface MyDtoFromServer {
+    readonly name: string;
+    readonly age: number;
+}

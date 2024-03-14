@@ -36,6 +36,22 @@ downloadPage('https://en.wikipedia.org/wiki/Robert_Cecil_Martin', 'article.html'
 // }
 
 
+
+// valid examples:
+// "test.email+alex@leetcode.com"
+// "test.email.leet+alex@code.com"
+// "example.email@localhost"
+// "test.email@li.cunxin.com"
+// "test@domain.com"
+// "test_email@doc.com"
+// "test.email+cool@chess.com"
+// const expression: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+//
+// const email: string = 'john@gmail.com';
+// const result: boolean = expression.test(email); // true
+//
+// console.log('e-mail is ' + (result ? 'correct' : 'incorrect'));
+
 /////////// also errors: -----------
 interface User {
     email:string
