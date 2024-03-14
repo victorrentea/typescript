@@ -1,14 +1,9 @@
 import {expect} from "chai";
 
 function filterCarModels(criteria: CarSearchCriteria, models: CarModel[]): CarModel[] {
-  for (let i = 0; i < models.length; i++) {
-    if (!MathUtil.intervalsIntersect(models[i].startYear, models[i].endYear, criteria.startYear, criteria.endYear)) {
-      models.splice(i, 1);
-      i--;
-    }
-  }
+  const results = models.filter(model => MathUtil.intervalsIntersect(model.startYear, model.endYear, criteria.startYear, criteria.endYear))
   console.log("More filtering logic");
-  return models;
+  return results;
 }
 
 function applyCapacityFilter() {
@@ -16,6 +11,7 @@ function applyCapacityFilter() {
 }
 
 class MathUtil {
+  // namespaced, but more to write than a global function
   static intervalsIntersect(start1: number, end1: number, start2: number, end2: number): boolean {
     return start1 <= end2 && start2 <= end1;
   }
