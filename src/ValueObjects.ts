@@ -6,12 +6,13 @@ import {expect} from "chai";
 //    return MathUtil.intervalsIntersect(model.startYear, model.endYear, criteria.startYear, criteria.endYear);
 // }
 function filterCarModels(criteria: CarSearchCriteria, models: CarModel[]): CarModel[] {
-  // const results = models.filter(model => MathUtil.intervalsIntersect(
-  //     model.startYear,
-  //     model.endYear,
-  //     criteria.startYear,
-  //     criteria.endYear))
-  const results = models.filter(model => model.intervalIntersects(criteria));
+  // slightly more complicated as I have a variable keeping a function
+  const filterByYears = (model:CarModel) => MathUtil.intervalsIntersect(
+      model.startYear,
+      model.endYear,
+      criteria.startYear,
+      criteria.endYear);
+  const results = models.filter(filterByYears)
   console.log("More filtering logic");
   return results;
 }
@@ -46,13 +47,7 @@ class CarModel {
     }
   }
 
-  intervalIntersects(criteria: CarSearchCriteria) {
-    return MathUtil.intervalsIntersect(
-      this.startYear,
-      this.endYear,
-      criteria.startYear,
-      criteria.endYear);
-  }
+
 }
 
 it('should filter car models', () => {
