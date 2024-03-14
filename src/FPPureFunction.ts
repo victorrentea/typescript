@@ -1,44 +1,5 @@
-enum ProductCategory {
-    ELECTRONICS,
-    KIDS,
-    ME,
-    HOME,
-    UNCATEGORIZED
-}
+import {Coupon, Customer, Product} from "./FPmodel";
 
-type Product = {
-    category: ProductCategory;
-    isPremium: boolean;
-    id: number;
-    isDeleted: boolean;
-};
-
-class Coupon {
-    private readonly category: ProductCategory;
-    private readonly discountAmount: number;
-    public readonly autoApply: boolean = true;
-
-    constructor(category: ProductCategory, discountAmount: number) {
-        this.category = category;
-        this.discountAmount = discountAmount;
-    }
-
-    isApplicableFor(product: Product): boolean {
-        return (product.category == this.category || this.category == null) && !product.isPremium;
-    }
-
-    apply(product: Product, price: number): number {
-        if (!this.isApplicableFor(product)) {
-            throw new Error("Illegal Argument Exception");
-        }
-        return price - this.discountAmount;
-    }
-}
-
-
-type Customer = {
-    coupons(): Coupon[];
-};
 type CustomerApi = {
     findById(id: number): Customer;
 };
@@ -52,7 +13,7 @@ type ProductApi = {
     findAllById(productIds: number[]): Product[];
 };
 
-class Pure {
+class FPPureFunction {
     constructor(
         private readonly customerApi: CustomerApi,
         private readonly thirdPartyPricesApi: ThirdPartyPricesApi,

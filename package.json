@@ -28,7 +28,6 @@
   },
   "author": "Felix Blechschmitt",
   "license": "GPL-3.0",
-  "type": "module",
   "dependencies": {
     "typescript": "^5.2.2"
   },
