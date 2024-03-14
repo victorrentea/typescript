@@ -68,3 +68,5 @@ class SubTeacher extends Teacher {
     getFoo() { return this.name;}
 }
 
+
+console.log(parseInt(0, 10));
