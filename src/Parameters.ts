@@ -11,13 +11,13 @@
 import {it} from "mocha";
 import {expect} from "chai";
 
-export function createMenu(cancellable: boolean, title: string, body: string) {
+export function createMenu(title: string, body: string, cancellable: boolean) {
     console.log("Inside: ", title, body, cancellable);
 }
 
 
 it('parameters', () => {
-    createMenu(false, "Bar", "Foo");
+    createMenu("Bar", "Foo", false);
     expect(true).to.be.true;
 });
 
