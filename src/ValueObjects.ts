@@ -2,12 +2,16 @@ import {expect} from "chai";
 
 
 // default GO-TO: create a new function to hide the garbage in
-function intersectIntervals(model: CarModel, criteria: CarSearchCriteria): boolean {
-   return MathUtil.intervalsIntersect(model.startYear, model.endYear, criteria.startYear, criteria.endYear);
-}
+// function intersectIntervals(model: CarModel, criteria: CarSearchCriteria): boolean {
+//    return MathUtil.intervalsIntersect(model.startYear, model.endYear, criteria.startYear, criteria.endYear);
+// }
 function filterCarModels(criteria: CarSearchCriteria, models: CarModel[]): CarModel[] {
-  // const results = models.filter(model => MathUtil.intervalsIntersect(model.startYear, model.endYear, criteria.startYear, criteria.endYear))
-  const results = models.filter(model => intersectIntervals(model, criteria))
+  // const results = models.filter(model => MathUtil.intervalsIntersect(
+  //     model.startYear,
+  //     model.endYear,
+  //     criteria.startYear,
+  //     criteria.endYear))
+  const results = models.filter(model => model.intervalIntersects(criteria));
   console.log("More filtering logic");
   return results;
 }
@@ -40,6 +44,14 @@ class CarModel {
     if (startYear > endYear) {
       throw new Error("start larger than end");
     }
+  }
+
+  intervalIntersects(criteria: CarSearchCriteria) {
+    return MathUtil.intervalsIntersect(
+      this.startYear,
+      this.endYear,
+      criteria.startYear,
+      criteria.endYear);
   }
 }
 
