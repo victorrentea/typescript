@@ -10,13 +10,13 @@ bigUglyMethod(2, 1, true);
 
 
 // 100% safe changes: rename of a param, local const/let; extract a function
-function bigUglyMethod(discountCode: number, productsSize: number, boulean: boolean = false) {
-  console.log("Donkey Logic 1 " + productsSize + " and " + discountCode);
-  console.log("Donkey Logic 2 " + productsSize);
-  console.log("Donkey Logic 3 " + productsSize);
+function bigUglyMethod(discountCode: number, productCount: number, boulean: boolean = false) {
+  console.log("Donkey Logic 1 " + productCount + " and " + discountCode);
+  console.log("Donkey Logic 2 " + productCount);
+  console.log("Donkey Logic 3 " + productCount);
 
   if (boulean) {
-    console.log("Some stuff only for CR323 4 " + productsSize);
+    console.log("Some stuff only for CR323 4 " + productCount);
   }
 
   console.log("More Cow Logic " + discountCode);
