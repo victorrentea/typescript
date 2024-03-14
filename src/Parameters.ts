@@ -10,14 +10,17 @@
 
 import {it} from "mocha";
 import {expect} from "chai";
+import {call} from "request";
 
-export function createMenu(title: string, body: string, cancellable: boolean) {
+export function createMenu(title: string, body: string, cancellable?: boolean) {
+    cancellable = cancellable || true;
     console.log("Inside: ", title, body, cancellable);
 }
 
 
 it('parameters', () => {
     createMenu("Bar", "Foo", false);
+    createMenu("Bar", "Foo");
     expect(true).to.be.true;
 });
 
