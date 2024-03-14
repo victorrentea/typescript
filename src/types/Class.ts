@@ -1,24 +1,25 @@
 import {expect} from "chai";
 
-export class Customer {
-    private _name: string;
-
-    constructor(_name: string) {
-        if (_name.trim().length < 3) { // guard
+// Biz rule: customer name > 3 characters
+class Customer {
+    constructor(
+        private _name: string,
+        public readonly age: number
+    ) {
+        if (_name.length < 3) {
             throw new Error();
         }
-        this._name = _name;
     }
-
-    get name() { // getter
+    get name() {
         return this._name;
     }
-
-    set name(newName: string) { // setter
-        if (newName.trim().length < 3) { // guard
+    set name(newName: string) {
+        if (newName.length < 3) {
             throw new Error();
         }
-        this._name = newName;
+    }
+    get upperName() { //synthetic getter
+        return this._name.toUpperCase();
     }
 
     func() {
@@ -27,11 +28,13 @@ export class Customer {
 }
 
 it("should throw calling new", () => {
-    expect(() => new Customer("Bo")).to.throw();
+    expect(() => new Customer("Bo", 20)).to.throw();
 });
 
-const customer = new Customer("John");
-customer.name = "Altu";
+const customer = new Customer("John", 20);
+customer.name = "Booool";
+console.log(customer.name);
+console.log(customer.upperName);
 it("should throw setting attribute", () => {
     expect(() => customer.name = "Bo").to.throw();
 });
@@ -46,16 +49,11 @@ function functionCalledOnType(customer: Customer) {
 function whyAnySucks(customer: any) {
     customer.func(); // IDE cannot track the invoked method
 }
-
+//
 whyAnySucks(customer);
 it("should throw runtime", () => {
     expect(() => whyAnySucks("string why not")).to.throw();
 });
+//
+//
 
-
-
-
-interface MyDtoFromServer {
-    readonly name: string;
-    readonly age: number;
-}

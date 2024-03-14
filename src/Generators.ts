@@ -6,7 +6,6 @@ function fibonacci(nn: number): number[] {
     while (items.length < nn) {
         items.push(items[items.length - 2] + items[items.length - 1]);
     }
-
     return items;
 }
 
@@ -15,10 +14,12 @@ it('should print first 10 Fibonacci numbers', () => {
 });
 
 
+
+
 function* fibonacciGenerator(): IterableIterator<number> {
     let a = 1;
     let b = 1;
-    while (true) {
+    for (let i = 0; i < 20; i++) {
         yield a;
         [a, b] = [b, a + b];
     }
@@ -26,11 +27,7 @@ function* fibonacciGenerator(): IterableIterator<number> {
 
 it('should print first 10 Fibonacci numbers - generator', () => {
     const gen = fibonacciGenerator();
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 30; i++) {
         console.log(gen.next().value);
     }
 });
-
-// TODO itiriri(fibonacci())
-//   .take(10)
-//   .forEach(fib => console.log(fib));
