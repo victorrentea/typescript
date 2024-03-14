@@ -57,3 +57,33 @@ it("should throw runtime", () => {
 //
 //
 
+
+class Point {
+    constructor(public x: number, public y: number) {
+    }
+}
+
+function f(p:Point ) {
+    p.x++;
+}
+
+it("f is not pure, changes the state of its parameter", () => {
+    const p = new Point(1, 2) ;
+    console.log(p);
+    f(p);
+    console.log(p);
+    expect(p.x).to.equal(2);
+});
+
+
+function handle(customer: Customer2):Customer2 {
+    return {...customer, active:true};
+    // return customer.withActiveTrue();
+}
+const c: Customer2 = {name: "John", active: false};
+handle(c);
+
+interface Customer2 {
+    readonly name: string;
+    readonly active: boolean;
+}
