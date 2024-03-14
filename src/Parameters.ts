@@ -11,8 +11,9 @@
 import {it} from "mocha";
 import {expect} from "chai";
 
-export function createMenu(title: string, body: string, cancellable?: boolean) {
-    cancellable = cancellable || false;
+export function createMenu(title: string, body?: string, cancellable?: boolean) {
+    cancellable = cancellable ?? false;
+    body = body ?? "N/A";
     console.log("Inside: ", title, body, cancellable);
 }
 
@@ -20,6 +21,7 @@ export function createMenu(title: string, body: string, cancellable?: boolean) {
 it('parameters', () => {
     createMenu("Bar", "Foo", true);
     createMenu("Bar", "Foo");
+    createMenu("Bar");
     expect(true).to.be.true;
 });
 
