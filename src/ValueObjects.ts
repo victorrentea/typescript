@@ -1,7 +1,13 @@
 import {expect} from "chai";
 
+
+// default GO-TO: create a new function to hide the garbage in
+function intersectIntervals(model: CarModel, criteria: CarSearchCriteria): boolean {
+   return MathUtil.intervalsIntersect(model.startYear, model.endYear, criteria.startYear, criteria.endYear);
+}
 function filterCarModels(criteria: CarSearchCriteria, models: CarModel[]): CarModel[] {
-  const results = models.filter(model => MathUtil.intervalsIntersect(model.startYear, model.endYear, criteria.startYear, criteria.endYear))
+  // const results = models.filter(model => MathUtil.intervalsIntersect(model.startYear, model.endYear, criteria.startYear, criteria.endYear))
+  const results = models.filter(model => intersectIntervals(model, criteria))
   console.log("More filtering logic");
   return results;
 }
