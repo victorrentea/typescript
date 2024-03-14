@@ -28,13 +28,15 @@
   },
   "author": "Felix Blechschmitt",
   "license": "GPL-3.0",
+  "type": "module",
   "dependencies": {
-    "typescript": "^2.9.2"
+    "typescript": "^5.2.2"
   },
   "devDependencies": {
     "@types/chai": "^4.2.18",
     "@types/mocha": "^8.2.2",
     "@types/node": "^20.10.3",
+    "@types/request": "^2.48.12",
     "@typescript-eslint/eslint-plugin": "^6.13.2",
     "@typescript-eslint/parser": "^6.13.2",
     "chai": "^4.1.2",

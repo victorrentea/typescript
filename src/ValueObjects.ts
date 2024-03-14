@@ -1,20 +1,14 @@
-class SearchEngine {
+import {expect} from "chai";
 
-  public filterCarModels(criteria: CarSearchCriteria, models: CarModel[]): CarModel[] {
-    for (let i = 0; i < models.length; i++) {
-      if (!MathUtil.intervalsIntersect(models[i].startYear, models[i].endYear, criteria.startYear, criteria.endYear)) {
-        models.splice(i, 1);
-        i--;
-      }
+function filterCarModels(criteria: CarSearchCriteria, models: CarModel[]): CarModel[] {
+  for (let i = 0; i < models.length; i++) {
+    if (!MathUtil.intervalsIntersect(models[i].startYear, models[i].endYear, criteria.startYear, criteria.endYear)) {
+      models.splice(i, 1);
+      i--;
     }
-    console.log("More filtering logic");
-    return models;
   }
-
-  public applyCapacityFilter() {
-    console.log(MathUtil.intervalsIntersect(1000, 1600, 1250, 2000));
-  }
-
+  console.log("More filtering logic");
+  return models;
 }
 
 function applyCapacityFilter() {
@@ -47,10 +41,11 @@ class CarModel {
   }
 }
 
-let criteria = new CarSearchCriteria(2014, 2018, "Ford");
-let fordFocusMk2 = new CarModel("Ford", "Focus", 2012, 2016);
-fordFocusMk2.make = "Mertzan";
-// let models = filterCarModels(criteria, [fordFocusMk2]);
-// console.log(models);
-
+it('should filter car models', () => {
+  const criteria = new CarSearchCriteria(2014, 2018, "Ford");
+  const fordFocusMk2 = new CarModel("Ford", "Focus", 2012, 2016);
+  const models = filterCarModels(criteria, [fordFocusMk2]);
+  console.log(models);
+  expect(models).to.contain(fordFocusMk2);
+});
 

@@ -6,7 +6,9 @@
     "types": [
       "mocha"
     ],
-    "strict": true
+    "strict": true,
+    "esModuleInterop": true,
+    "allowJs": true
   },
   "exclude": [
     "node_modules"

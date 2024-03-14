@@ -8,6 +8,6 @@
 //  - {defaults, ...spread}
 //  - explore tuples: let marks:[number, number] = [1, 2]; // tuple of 2 number values
 
-export function createMenu(cancellable, title, body) {
+export function createMenu(cancellable: boolean, title: string, body: string) {
     console.log("Inside: ", title, body, cancellable);
 }

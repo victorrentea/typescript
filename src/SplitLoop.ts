@@ -1,12 +1,13 @@
 export type Employee = {
-    id: number;
+    id: number | null;
+    name: string | null;
     age: number;
     isConsultant: boolean;
     salary: number | null;
 };
 
 
-export function computeStatsHard(employees: Employee[], retrieveSalary: (employeeId: number) => number): string {
+export function computeStatsHard(employees: Employee[], retrieveSalary: (employeeId: number) => number | null): string {
     let totalEmpAge: number = 0;
     const consultantsPaidOver3K: Employee[] = [];
     for (const employee of employees) {

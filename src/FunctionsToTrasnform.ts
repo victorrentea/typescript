@@ -24,8 +24,8 @@ export class CombineFunctionsIntoTransform {
 
 
 // ----- SUPPORTING, DUMMY CODE ------
-class Ticket {
-    public customerName: string;
-    public code: string;
-    public eventId: number;
+interface Ticket {
+    customerName: string;
+    code: string;
+    eventId: number;
 }

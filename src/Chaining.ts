@@ -1,5 +1,5 @@
 class QueryBuilder {
-    private collection: string;
+    private collection: string = "";
     private pageNumber: number = 1;
     private itemsPerPage: number = 100;
     private orderByFields: string[] = [];

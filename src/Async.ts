@@ -1,6 +1,6 @@
 import { get } from 'request';
 
-function downloadPage(url: string, saveTo: string, callback: (error: Error, content?: string) => void) {
+function downloadPage(url: string, saveTo: string, callback: (error: Error|null, content?: string) => void) {
     get(url, (error, response) => {
         if (error) {
             callback(error);
@@ -37,17 +37,17 @@ downloadPage('https://en.wikipedia.org/wiki/Robert_Cecil_Martin', 'article.html'
 
 
 /////////// also errors: -----------
-class User {
+interface User {
     email:string
 }
-async function getUser():Promise<User> {return new User();}
+async function getUser():Promise<User> {return {email:"a@b.com"};}
 async function sendEmail(email:string, subject:string):Promise<void> {}
 
 // getUser()
 //     .then((user: User) => {
 //         return sendEmail(user.email, 'Welcome!');
 //     }).catch()
-    ;
+
 
 // try {
 //     let user = await getUser();

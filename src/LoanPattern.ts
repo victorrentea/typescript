@@ -5,13 +5,12 @@ export class EmailContext {
     }
 }
 
-class Email {
-    private readonly id = Math.floor(Math.random() * 600) + 1;
-    public subject: string;
-    public body: string;
-    public sender: string;
-    public replyTo: string;
-    public to: string;
+type Email = {
+    subject: string;
+    body: string;
+    sender: string;
+    replyTo: string;
+    to: string;
 }
 
 export class EmailService {
@@ -21,13 +20,13 @@ export class EmailService {
         const MAX_RETRIES = 3;
         try {
             for (let i = 0; i < MAX_RETRIES; i++) {
-                const email = new Email(); // constructor generates new unique ID
-                email.sender = "noreply@corp.com";
-                email.replyTo = "/dev/null";
-                email.to = emailAddress;
-                
-                email.subject = "Order Received!";
-                email.body = "Thank you for your order";
+                const email = {
+                    sender: "noreply@corp.com",
+                    replyTo: "/dev/null",
+                    to: emailAddress,
+                    subject: "Order Received!",
+                    body: "Thank you for your order"
+                };
                 const success = context.send(email);
                 if (success) break;
             }
