@@ -11,7 +11,7 @@ export enum MovieCategory {
 };
 
 
-class Rental {
+export class Rental {
 
   constructor(public readonly movie: Movie, public readonly days: number){}
 

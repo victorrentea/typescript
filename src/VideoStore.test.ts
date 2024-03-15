@@ -1,15 +1,15 @@
 import {expect} from 'chai';
 import {describe, it} from 'mocha';
-import {Customer, MovieCategory} from "./VideoStore";
+import {Customer, MovieCategory, Rental} from "./VideoStore";
 
 
 describe('Videostore', () => {
     it('Characterization Test ', function () {
 
     const customer = new Customer("John Doe");
-    customer.addRental({movie: {title:"Star Wars", movieCategory: MovieCategory.NEW_RELEASE}, days: 6});
-    customer.addRental({movie: {title:"Sofia", movieCategory: MovieCategory.CHILDRENS}, days: 7});
-    customer.addRental({movie: {title:"Inception", movieCategory: MovieCategory.REGULAR}, days: 5});
+    customer.addRental(new Rental({title:"Star Wars", movieCategory: MovieCategory.NEW_RELEASE}, 6));
+    customer.addRental(new Rental({title:"Sofia", movieCategory: MovieCategory.CHILDRENS}, 7));
+    customer.addRental(new Rental({title:"Inception", movieCategory: MovieCategory.REGULAR},5));
 
     const expected = "Rental Record for John Doe\n"
       + "	Star Wars	18.0\n"
