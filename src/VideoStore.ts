@@ -41,7 +41,7 @@ class Rental {
   }
 
   public getFrequentRenterPoints(): number {
-    if(this.movie.movieCategory === MovieCategory.NEW_RELEASE && this.daysRenting > 1) return 2;
+    if (this.movie.movieCategory === MovieCategory.NEW_RELEASE && this.daysRenting > 1) return 2;
     return 1;
   }
 }
@@ -58,19 +58,22 @@ export class Customer {
     this.rentals.push(new Rental(movie, daysRenting));
   }
   public statement(): string {
-    let totalPrice: number = 0;
-    let frequentRenterPoints = 0;
+    const totalPrice = this.rentals
+      .map(rental => rental.getPrice())
+      .reduce((a, b) => a + b);
 
-    let result = "Rental Record for " + this.name + "\n";
-    for (const rental of this.rentals) {
-      const price = rental.getPrice();
-      frequentRenterPoints += rental.getFrequentRenterPoints();
-      result += "\t" + rental.movie.title + "\t" + price.toFixed(1) + "\n";
-      totalPrice += price;
-    }
-    // add footer lines
-    result += "Amount owed is " + totalPrice.toFixed(1) + "\n";
-    result += "You earned " + frequentRenterPoints + " frequent renter points";
-    return result;
+    const frequentRenterPoints = this.rentals
+      .map(rental => rental.getFrequentRenterPoints())
+      .reduce((a, b) => a + b);
+
+    const resultHeader = "Rental Record for " + this.name + "\n";
+    let resultLines = this.rentals
+        .map(rental => "\t" + rental.movie.title + "\t" + rental.getPrice().toFixed(1) + "\n")
+        .reduce((a, b) => a + b);
+    const resultFooter =
+      "Amount owed is " + totalPrice.toFixed(1) + "\n"
+      + "You earned " + frequentRenterPoints + " frequent renter points";
+
+    return [resultHeader, resultLines, resultFooter].join('');
   }
 }
