@@ -35,58 +35,44 @@ export class Customer {
     "\n" +
     this.rentals.map(this.getStatement).reduce((a, b) => a + b);
 
-  private calcPrice(acc: number, rental: Rental) {
-    const moviePrice = this.getPriceByCategory(rental.movie, rental.basePrice);
+  private calcPrice(acc: number, moviePrice: number) {
     return acc + moviePrice;
   }
 
   public statement(): string {
-    let frequentRenterPoints = 0;
-
-    let result = this.getStatementLine();
 
     const totalPrice = this.rentals
       .map((rental) => this.getPriceByCategory(rental.movie, rental.basePrice))
       .reduce(this.calcPrice, 0);
 
-    for (const rental of this.rentals) {
-      const movie = rental.movie; // let
-      const basePrice = rental.basePrice;
-      // determine amounts for each line
+    const isNewRelease = (rental: Rental) => rental.movie.priceCode != null && rental.movie.priceCode == MovieCategory.NEW_RELEASE;
 
-      // add frequent renter points
-      frequentRenterPoints++;
-      // add bonus for a two day new release rental
-      if (
-        movie.priceCode != null &&
-        movie.priceCode == MovieCategory.NEW_RELEASE &&
-        basePrice > 1
-      )
-        frequentRenterPoints++;
-      // show figures line for this rental
-      // result += "\t" + movie.title + "\t" + moviePrice.toFixed(1) + "\n";
-    }
+    const frequentRenterPoints = this.rentals.reduce((acc, rental) => {
+      if (isNewRelease(rental) && rental.basePrice > 1)
+        return acc + 2;
+      return acc + 1;
+    }, 0);
+
     // add footer lines
-    result += "Amount owed is " + totalPrice.toFixed(1) + "\n";
-    result += "You earned " + frequentRenterPoints + " frequent renter points";
-    return result;
+    return this.getStatementLine()
+        + "Amount owed is " + totalPrice.toFixed(1) + "\n"
+        + "You earned " + frequentRenterPoints + " frequent renter points";
   }
 
   private getPriceByCategory(movie: Movie, basePrice: number) {
-    let moviePrice = 0; // this should be a const
+    const calcDiscount = (basePrice: number, discountNum: number) => (basePrice - discountNum) * 1.5;
+
     switch (movie.priceCode) {
       case MovieCategory.REGULAR:
-        moviePrice += 2;
-        if (basePrice > 2) moviePrice += (basePrice - 2) * 1.5; // magic number
-        break;
+        if (basePrice > 2)
+          return 2 + calcDiscount(basePrice, 2);
+        return 2;
       case MovieCategory.NEW_RELEASE:
-        moviePrice += basePrice * 3; // magic number
-        break;
+          return basePrice * 3;
       case MovieCategory.CHILDREN:
-        moviePrice += 1.5; // magic number
-        if (basePrice > 3) moviePrice += (basePrice - 3) * 1.5; // magic number
-        break;
+        if (basePrice > 3)
+          return 1.5 + calcDiscount(basePrice, 3);
+        return 1.5; // magic number
     }
-    return moviePrice;
   }
 }
