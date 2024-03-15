@@ -21,7 +21,7 @@ class Rental {
               public readonly daysRenting: number) {
   }
 
-  public get price(): number {
+  public get price(): number { // a property, therefore a pure function
     const {
       basePrice, dayRentingCutoff, extraMultiplier
     } = moviePricing[this.movie.movieCategory];
