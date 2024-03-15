@@ -1,16 +1,16 @@
 export class Movie {
   public title: string;
-  public movieCategory: number;
+  public movieCategory: MovieCategory;
   constructor(title: string, movieCategory: number) {
     this.title = title;
     this.movieCategory = movieCategory;
   }
 }
 
-export const MOVIE_CATEGORY = {
-  CHILDRENS: 2,
-  REGULAR: 0,
-  NEW_RELEASE: 1
+export enum MovieCategory {
+  REGULAR= 0,
+  NEW_RELEASE= 1,
+  CHILDRENS= 2,
 };
 
 
@@ -22,8 +22,8 @@ export class Customer {
     this.name = name;
   }
 
-  public addRental(m: Movie, d: number) {
-    this.rentals.push({d: d, movie: m});
+  public addRental(movie: Movie, d: number) {
+    this.rentals.push({ movie, d });
   }
 
   public statement(): string {
@@ -37,15 +37,15 @@ export class Customer {
       let dr = r.d;
       // determine amounts for each line
       switch (each.movieCategory) {
-        case MOVIE_CATEGORY.REGULAR:
+        case MovieCategory.REGULAR:
           thisAmount += 2;
           if (dr > 2)
             thisAmount += (dr - 2) * 1.5;
           break;
-        case MOVIE_CATEGORY.NEW_RELEASE:
+        case MovieCategory.NEW_RELEASE:
           thisAmount += dr * 3;
           break;
-        case MOVIE_CATEGORY.CHILDRENS:
+        case MovieCategory.CHILDRENS:
           thisAmount += 1.5;
           if (dr > 3)
             thisAmount += (dr - 3) * 1.5;
@@ -55,7 +55,7 @@ export class Customer {
       frequentRenterPoints++;
       // add bonus for a two day new release rental
       if (each.movieCategory != null &&
-          (each.movieCategory == MOVIE_CATEGORY.NEW_RELEASE)
+          (each.movieCategory == MovieCategory.NEW_RELEASE)
           && dr > 1)
         frequentRenterPoints++;
       // show figures line for this rental
