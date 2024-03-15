@@ -1,9 +1,7 @@
 export class Movie {
 
-  constructor(public title: string, public priceCode: MovieCategory){
+  constructor(public title: string, public movieCategory: MovieCategory){}
 
-  }
-  
 }
 
 export enum MovieCategory {
@@ -30,9 +28,9 @@ export class Customer {
     this.rentals.push(rental);
   }
 
-  private calculateFrequentRenterPoints(rental: Rental): number {
-    if (rental.movie.priceCode != null &&
-      (rental.movie.priceCode == MovieCategory.NEW_RELEASE)
+  private calculateFrequentRenterPointsForRental(rental: Rental): number {
+    if (rental.movie.movieCategory != null &&
+      (rental.movie.movieCategory == MovieCategory.NEW_RELEASE)
       && rental.days > 1
     ) {
       return 2
@@ -45,7 +43,7 @@ export class Customer {
   }
 
   private calculatePrice(rental: Rental): number {
-    switch (rental.movie.priceCode) {
+    switch (rental.movie.movieCategory) {
       case MovieCategory.REGULAR:
         return rental.days <= 2 ? 2 : 2 + (rental.days - 2) * 1.5
       case MovieCategory.NEW_RELEASE:
@@ -56,19 +54,29 @@ export class Customer {
     }
   }
 
+  private calculateTotalPrice(): number {
+    return this.rentals.map(rental => this.calculatePrice(rental)).reduce((a, b) => a + b, 0);
+  }
+
+  private calculateFrequentRenterPoints() {
+    return this.rentals.map(rental => this.calculateFrequentRenterPointsForRental(rental)).reduce((a, b) => a + b, 0);
+  }
+
   public generateStatement(): string {
 
     const statementStart = "Rental Record for " + this.name + "\n"
 
     const statementLines = this.rentals.reduce( (acc, rental) => ( acc + this.getStatementLine(rental) ) , "")
 
-    const totalPrice: number = this.rentals.map( rental => this.calculatePrice(rental) ).reduce( (a,b) => a + b, 0)
-    const statementFooter = "Amount owed is " + totalPrice.toFixed(1) + "\n";
+    const statementFooter = "Amount owed is " + this.calculateTotalPrice().toFixed(1) + "\n";
 
-    const frequentRenterPoints = this.rentals.map( rental => this.calculateFrequentRenterPoints(rental) ).reduce((a,b) => a + b, 0)
-    const statementEnd = "You earned " + frequentRenterPoints + " frequent renter points";
+    const statementEnd = "You earned " + this.calculateFrequentRenterPoints() + " frequent renter points";
 
     return statementStart + statementLines + statementFooter + statementEnd;
 
   }
+
+
+
+
 }
