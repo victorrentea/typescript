@@ -15,6 +15,11 @@ export enum MovieCategory {
   CHILDRENS= 2,
 };
 
+const moviePricing:Record<MovieCategory, {basePrice:number,dayRentingCutoff:number,extraMultiplier:number}> = {
+    [MovieCategory.REGULAR]: {basePrice: 2, extraMultiplier: 1.5, dayRentingCutoff: 2},
+    [MovieCategory.NEW_RELEASE]: {basePrice: 0, extraMultiplier: 3, dayRentingCutoff: 0},
+    [MovieCategory.CHILDRENS]: {basePrice: 1.5, extraMultiplier: 1.5, dayRentingCutoff: 3},
+}
 
 export class Customer {
   private name: string;
@@ -30,23 +35,20 @@ export class Customer {
 
   private calculateMoviePrice(rental: Rental): number {
     const { movie, daysRenting } = rental;
-    let price = 0;
-    switch (movie.movieCategory) {
-      case MovieCategory.REGULAR:
-        price = 2;
-        if (daysRenting > 2)
-          price += (daysRenting - 2) * 1.5;
-        break;
-      case MovieCategory.NEW_RELEASE:
-        price = daysRenting * 3;
-        break;
-      case MovieCategory.CHILDRENS:
-        price = 1.5;
-        if (daysRenting > 3)
-          price += (daysRenting - 3) * 1.5;
-        break;
+    const {basePrice,dayRentingCutoff,extraMultiplier} = moviePricing[movie.movieCategory];
+
+    let price = basePrice;
+    if(daysRenting > dayRentingCutoff){
+        price += (daysRenting - dayRentingCutoff) * extraMultiplier;
     }
+
     return price;
+  }
+
+  private getFrequentRenterPointsForRental(rental: Rental): number {
+    const { movie, daysRenting } = rental;
+    if(movie.movieCategory === MovieCategory.NEW_RELEASE && daysRenting > 1) return 2;
+    return 1;
   }
 
   public statement(): string {
@@ -55,15 +57,11 @@ export class Customer {
 
     let result = "Rental Record for " + this.name + "\n";
     for (const rental of this.rentals) {
-      // determine amounts for each line
+      const { movie } = rental;
+
       const price = this.calculateMoviePrice(rental);
-      const { daysRenting, movie } = rental;
-      // add frequent renter points
-      frequentRenterPoints++;
-      // add bonus for a two day new release rental
-      if (movie.movieCategory === MovieCategory.NEW_RELEASE && daysRenting > 1)
-        frequentRenterPoints++;
-      // show figures line for this rental
+      frequentRenterPoints+= this.getFrequentRenterPointsForRental(rental);
+
       result += "\t" + movie.title + "\t" + price.toFixed(1) + "\n";
       totalPrice += price;
     }

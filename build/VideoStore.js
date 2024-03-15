@@ -25,7 +25,7 @@ class Customer {
             let thisAmount = 0;
             let dr = r.d;
             // determine amounts for each line
-            switch (each.priceCode) {
+            switch (each.movieCategory) {
                 case exports.MOVIE_CATEGORY.REGULAR:
                     thisAmount += 2;
                     if (dr > 2)
@@ -43,8 +43,8 @@ class Customer {
             // add frequent renter points
             frequentRenterPoints++;
             // add bonus for a two day new release rental
-            if (each.priceCode != null &&
-                (each.priceCode == exports.MOVIE_CATEGORY.NEW_RELEASE)
+            if (each.movieCategory != null &&
+                (each.movieCategory == exports.MOVIE_CATEGORY.NEW_RELEASE)
                 && dr > 1)
                 frequentRenterPoints++;
             // show figures line for this rental
