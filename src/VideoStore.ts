@@ -1,25 +1,30 @@
 export class Movie {
   public title: string;
-  public priceCode: number;
+  public priceCode: MOVIE_CATEGORY;
 }
 
-export const MOVIE_CATEGORY = {
-  CHILDRENS: 2,
-  REGULAR: 0,
-  NEW_RELEASE: 1
+export enum MOVIE_CATEGORY {
+  CHILDRENS,
+  REGULAR,
+  NEW_RELEASE
 };
 
 
+type Rental = {
+  movie: Movie;
+  days: number;
+}
+
 export class Customer {
   private name: string;
-  private rentals: any[] = [];
+  private rentals: Rental[] = [];
 
   constructor(name: string) {
     this.name = name;
   }
 
-  public addRental(m: Movie, d: number) {
-    this.rentals.push({d: d, m: m});
+  public addRental(movie: Movie, days: number): void {
+    this.rentals.push({days, movie});
   }
 
   public statement(): string {
@@ -27,40 +32,35 @@ export class Customer {
     let frequentRenterPoints = 0;
 
     let result = "Rental Record for " + this.name + "\n";
-    for (const r of this.rentals) {
-      let each = r.m;
-      let thisAmount = 0;
-      let dr = r.d;
+    for (const rental of this.rentals) {
       // determine amounts for each line
-      switch (each.priceCode) {
-        case MOVIE_CATEGORY.REGULAR:
-          thisAmount += 2;
-          if (dr > 2)
-            thisAmount += (dr - 2) * 1.5;
-          break;
-        case MOVIE_CATEGORY.NEW_RELEASE:
-          thisAmount += dr * 3;
-          break;
-        case MOVIE_CATEGORY.CHILDRENS:
-          thisAmount += 1.5;
-          if (dr > 3)
-            thisAmount += (dr - 3) * 1.5;
-          break;
-      }
+      const thisAmount = determAmount(rental);
       // add frequent renter points
       frequentRenterPoints++;
       // add bonus for a two day new release rental
-      if (each.priceCode != null &&
-          (each.priceCode == MOVIE_CATEGORY.NEW_RELEASE)
-          && dr > 1)
+      if (rental.movie.priceCode != null &&
+          (rental.movie.priceCode == MOVIE_CATEGORY.NEW_RELEASE)
+          && rental.days > 1)
         frequentRenterPoints++;
       // show figures line for this rental
-      result += "\t" + each.title + "\t" + thisAmount.toFixed(1) + "\n";
+      result += "\t" + rental.movie.title + "\t" + thisAmount.toFixed(1) + "\n";
       totalAmount += thisAmount;
     }
     // add footer lines
     result += "Amount owed is " + totalAmount.toFixed(1) + "\n";
     result += "You earned " + frequentRenterPoints + " frequent renter points";
     return result;
+
+    function determAmount(rental: Rental) {
+      switch (rental.movie.priceCode) {
+        case MOVIE_CATEGORY.REGULAR:
+          return rental.days <= 2 ? 2 : 2 + (rental.days - 2) * 1.5
+        case MOVIE_CATEGORY.NEW_RELEASE:
+          return rental.days * 3;
+        case MOVIE_CATEGORY.CHILDRENS:
+          return rental.days <= 3 ? 1.5 : 1.5 + (rental.days - 3) * 1.5;
+        default: return 0;
+      }
+    }
   }
 }
