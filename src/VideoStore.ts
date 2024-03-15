@@ -7,7 +7,7 @@ export class Movie {
   }
 }
 
-export const MOVIE_CATEGORY = {
+export const MOVIE_CATEGORY = { // wrong naming convention
   CHILDREN: 2,
   REGULAR: 0,
   NEW_RELEASE: 1,
