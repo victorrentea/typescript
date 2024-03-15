@@ -11,12 +11,9 @@ export const MOVIE_CATEGORY = {
 
 
 export class Customer {
-  private name: string;
   private rentals: any[] = [];
 
-  constructor(name: string) {
-    this.name = name;
-  }
+  constructor(private readonly name: string) {}
 
   public addRental(m: Movie, d: number) {
     this.rentals.push({d: d, m: m});
