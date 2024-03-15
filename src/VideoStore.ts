@@ -44,14 +44,7 @@ export class Customer {
       .map((rental) => this.getPriceByCategory(rental.movie, rental.basePrice))
       .reduce(this.calcPrice, 0);
 
-    const isNewRelease = (rental: Rental) =>
-      rental.movie.priceCode != null &&
-      rental.movie.priceCode == MovieCategory.NEW_RELEASE;
-
-    const frequentRenterPoints = this.rentals.reduce((acc, rental) => {
-      if (isNewRelease(rental) && rental.basePrice > 1) return acc + 2;
-      return acc + 1;
-    }, 0);
+    const frequentRenterPoints = this.rentals.map(this.computeFrequentPoints).reduce((acc, point) => acc + point, 0);
 
     // add footer lines
     return (
@@ -65,6 +58,16 @@ export class Customer {
     );
   }
 
+  private computeFrequentPoints(rental: Rental) {
+
+    const isNewRelease =
+        rental.movie.priceCode != null &&
+        rental.movie.priceCode == MovieCategory.NEW_RELEASE;
+
+    if (isNewRelease && rental.basePrice > 1) return 2;
+    return 1;
+  }
+
   private getPriceByCategory(movie: Movie, basePrice: number) {
     const calcDiscount = (basePrice: number, discountNum: number) =>
       (basePrice - discountNum) * 1.5;
@@ -73,8 +76,10 @@ export class Customer {
       case MovieCategory.REGULAR:
         if (basePrice > 2) return 2 + calcDiscount(basePrice, 2);
         return 2;
+
       case MovieCategory.NEW_RELEASE:
         return basePrice * 3;
+
       case MovieCategory.CHILDREN:
         if (basePrice > 3) return 1.5 + calcDiscount(basePrice, 3);
         return 1.5; // magic number
