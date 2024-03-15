@@ -1,6 +1,6 @@
 export class Movie {
 
-  constructor(public title: string, public movieCategory: MovieCategory){}
+  constructor(public readonly title: string, public readonly movieCategory: MovieCategory){}
 
 }
 
