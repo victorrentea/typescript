@@ -8,7 +8,7 @@ describe('Videostore', () => {
 
     const customer = new Customer("John Doe");
     customer.addRental(new Movie("Star Wars",  MovieCategory.NEW_RELEASE), 6);
-    customer.addRental(new Movie("Sofia", MovieCategory.CHILDRENS), 7);
+    customer.addRental(new Movie("Sofia", MovieCategory.CHILDREN), 7);
     customer.addRental(new Movie("Inception", MovieCategory.REGULAR), 5);
 
     const expected = "Rental Record for John Doe\n"
