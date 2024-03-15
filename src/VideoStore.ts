@@ -82,6 +82,7 @@ export class Customer {
 
       case MovieCategory.CHILDREN:
         if (basePrice > 3) return 1.5 + calcDiscount(basePrice, 3);
+        if (basePrice > 6) return 1.5 + calcDiscount(basePrice, 6);
         return 1.5; // magic number
     }
   }
