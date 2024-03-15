@@ -57,7 +57,11 @@ export class Customer {
   public addRental(movie: Movie, daysRenting: number) {
     this.rentals.push(new Rental(movie, daysRenting));
   }
-  public statement(): string {
+
+  private static formatPrice(price: number): string {
+    return price.toFixed(1);
+  }
+  public getStatement(): string {
     const totalPrice = this.rentals
       .map(rental => rental.getPrice())
       .reduce((a, b) => a + b);
@@ -67,11 +71,11 @@ export class Customer {
       .reduce((a, b) => a + b);
 
     const resultHeader = "Rental Record for " + this.name + "\n";
-    let resultLines = this.rentals
-        .map(rental => "\t" + rental.movie.title + "\t" + rental.getPrice().toFixed(1) + "\n")
+    const resultLines = this.rentals
+        .map(rental => "\t" + rental.movie.title + "\t" + Customer.formatPrice(rental.getPrice()) + "\n")
         .reduce((a, b) => a + b);
     const resultFooter =
-      "Amount owed is " + totalPrice.toFixed(1) + "\n"
+      "Amount owed is " + Customer.formatPrice(totalPrice) + "\n"
       + "You earned " + frequentRenterPoints + " frequent renter points";
 
     return [resultHeader, resultLines, resultFooter].join('');
