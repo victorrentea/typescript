@@ -70,13 +70,12 @@ export class Customer {
       .map(rental => rental.getFrequentRenterPoints())
       .reduce((a, b) => a + b);
 
-    const resultHeader = "Rental Record for " + this.name + "\n";
+    const resultHeader = `Rental Record for ${this.name}\n`;
     const resultLines = this.rentals
-        .map(rental => "\t" + rental.movie.title + "\t" + Customer.formatPrice(rental.getPrice()) + "\n")
+        .map(rental => `\t${rental.movie.title}\t${Customer.formatPrice(rental.getPrice())}\n`)
         .reduce((a, b) => a + b);
     const resultFooter =
-      "Amount owed is " + Customer.formatPrice(totalPrice) + "\n"
-      + "You earned " + frequentRenterPoints + " frequent renter points";
+      `Amount owed is ${Customer.formatPrice(totalPrice)}\nYou earned ${frequentRenterPoints} frequent renter points`;
 
     return [resultHeader, resultLines, resultFooter].join('');
   }
