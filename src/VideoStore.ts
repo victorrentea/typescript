@@ -3,9 +3,9 @@ export class Movie {
 }
 
 export enum MovieCategory {
-  CHILDREN = 'children',
-  REGULAR = 'regular',
-  NEW_RELEASE = 'new release',
+  CHILDREN = "children",
+  REGULAR = "regular",
+  NEW_RELEASE = "new release",
 }
 
 type Rental = {
@@ -22,29 +22,36 @@ export class Customer {
     this.rentals.push({ basePrice, movie });
   }
 
-  private getStatement = (rental: Rental) => "\t" + rental.movie.title + "\t" + rental.basePrice.toFixed(1) + "\n";
+  private getStatement = (rental: Rental) =>
+    "\t" +
+    rental.movie.title +
+    "\t" +
+    this.getPriceByCategory(rental.movie, rental.basePrice).toFixed(1) +
+    "\n";
 
-  private getStatementLine = () => this.rentals.reduce((acc, rental) => {
-      return acc + this.getStatement(rental);
-    }, "Rental Record for " + this.name + "\n");
+  private getStatementLine = () =>
+    "Rental Record for " +
+    this.name +
+    "\n" +
+    this.rentals.map(this.getStatement).reduce((a, b) => a + b);
+
+  private calcPrice(acc: number, rental: Rental) {
+    const moviePrice = this.getPriceByCategory(rental.movie, rental.basePrice);
+    return acc + moviePrice;
+  }
 
   public statement(): string {
     let frequentRenterPoints = 0;
 
-    const line = this.getStatementLine();
+    let result = this.getStatementLine();
 
-    let result = '';
-
-    const calcPrice = (acc: number, rental: Rental) => {
-      const moviePrice = this.getPriceByCategory(rental.movie, rental.basePrice);
-      return acc + moviePrice;
-    }
-
-    const totalPrice = this.rentals.reduce(calcPrice, 0);
+    const totalPrice = this.rentals
+      .map((rental) => this.getPriceByCategory(rental.movie, rental.basePrice))
+      .reduce(this.calcPrice, 0);
 
     for (const rental of this.rentals) {
-      let movie = rental.movie; // let
-      let basePrice = rental.basePrice;
+      const movie = rental.movie; // let
+      const basePrice = rental.basePrice;
       // determine amounts for each line
 
       // add frequent renter points
