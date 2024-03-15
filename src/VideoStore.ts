@@ -1,6 +1,9 @@
 export class Movie {
-  public title: string;
-  public priceCode: MovieCategory;
+
+  constructor(public title: string, public priceCode: MovieCategory){
+
+  }
+  
 }
 
 export enum MovieCategory {
