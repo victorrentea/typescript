@@ -1,15 +1,19 @@
 import {it} from "mocha";
 import {expect} from "chai";
 
-export function calculateOrderPrice(orderString: string, priceList: Map<string, number>): number {
-    const [str, quantity] = orderString.split(/\s+/);
-    const [, productCode ]=  str.split(/-/);
+function parseInput(orderString: string) {
+    const [str, quantityStr] = orderString.split(/\s+/); // split by space
+    const [, productCode] = str.split(/-/);
+    const quantity = parseInt(quantityStr);
+    return {productCode, quantity};
+}
 
-    const productPrice = priceList.get(productCode);
-    if (productPrice) {
-        return parseInt(quantity) * productPrice;
-    }
-    return 0;
+// for xample, orderString = "Chair-CHR 4" or "Table-TBL 2" or "Sofa-SFA 1"
+export function calculateOrderPrice(orderString: string, priceList: Map<string, number>): number {
+    const {productCode, quantity} = parseInput(orderString);
+
+    const productPrice = priceList.get(productCode) ?? 0;
+    return quantity * productPrice;
 }
 
 
