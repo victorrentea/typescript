@@ -71,7 +71,7 @@ export class Customer {
     "Rental Record for " + this.name + "\n";
 
   private printableRentalsSummary = () =>
-    this.rentals.map((rental) => rental.printableSummary()).join('');
+    this.rentals.map(rental => rental.printableSummary()).join('');
 
   private amountOwedSummary = () =>
     "Amount owed is " + this.totalAmount.toFixed(1) + "\n";
