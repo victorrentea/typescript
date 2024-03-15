@@ -11,6 +11,7 @@
 import {it} from "mocha";
 import {expect} from "chai";
 type CreateMenuConfig = {
+    // contents: MenuContents,
     title: string,
     body?: string,
     cancellable?: boolean
@@ -27,3 +28,10 @@ it('parameters', () => {
     expect(true).to.be.true;
 });
 
+
+
+const {badX:x, badY:y} = f();
+console.log(x, y);
+function f() {
+    return {badX: 10, badY: 20};
+}

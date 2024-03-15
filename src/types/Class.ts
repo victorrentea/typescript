@@ -61,6 +61,18 @@ it("should throw runtime", () => {
 class Point {
     constructor(public x: number, public y: number) {
     }
+
+    func() {
+        return 1;
+    }
+    private privateUnused() {
+        return 1;
+    }
+}
+
+function badUglyAny(point) {
+    // point.func();
+    point.privateUnused();
 }
 
 function f(p:Point ) {

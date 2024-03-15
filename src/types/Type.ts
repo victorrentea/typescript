@@ -55,3 +55,22 @@ function f(): BestPrice {
     // return {price: 1, route: ["A", "B"]};
     return {price: 1, route:[], liquiditySources: ["A", "B"]};
 }
+
+
+type CouponCode = string;
+type CustomerId = string;
+type CustomerType = "business" | "individual";
+enum CustomerTypeEnum {
+    Business = "business",
+    Individual = "individual"
+
+}
+function fManyParam(coupon: string, customerId: string) {
+
+}
+
+const coupon: CouponCode = "abc";
+const customerId: CustomerId = "123";
+const s1 = "def";
+fManyParam(coupon, customerId);
+fManyParam(customerId, coupon);
