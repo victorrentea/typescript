@@ -11,16 +11,41 @@ export enum MovieCategory {
 };
 
 
-type Rental = {
-  movie: Movie;
-  days: number;
+class Rental {
+
+  constructor(public readonly movie: Movie, public readonly days: number){}
+
+  getPrice(): number {
+    switch (this.movie.movieCategory) {
+      case MovieCategory.REGULAR:
+        return this.days <= 2 ? 2 : 2 + (this.days - 2) * 1.5
+      case MovieCategory.NEW_RELEASE:
+        return this.days * 3;
+      case MovieCategory.CHILDRENS:
+        return this.days <= 3 ? 1.5 : 1.5 + (this.days - 3) * 1.5;
+      default: return 0;
+    }
+  }
+
+  getStatement(): string {
+    return "\t" + this.movie.title + "\t" + this.getPrice().toFixed(1) + "\n";
+  }
+
+  calculateFrequentRenterPoints(): number {
+    if (this.movie.movieCategory != null &&
+      (this.movie.movieCategory == MovieCategory.NEW_RELEASE)
+      && this.days > 1
+    ) {
+      return 2
+    } 
+    return 1
+  }
 }
 
 export class Customer {
-  private name: string;
   private rentals: Rental[] = [];
 
-  constructor(name: string) {
+  constructor(public readonly name: string) {
     this.name = name;
   }
 
@@ -28,55 +53,17 @@ export class Customer {
     this.rentals.push(rental);
   }
 
-  private calculateFrequentRenterPointsForRental(rental: Rental): number {
-    if (rental.movie.movieCategory != null &&
-      (rental.movie.movieCategory == MovieCategory.NEW_RELEASE)
-      && rental.days > 1
-    ) {
-      return 2
-    } 
-    return 1
-  }
+  public generateStatement = () => this.generateStatementStart() + this.generateStatementLines() +  this.generateStatementFooter() + this.generateStatementEnd();
 
-  private getStatementLine(rental: Rental): string {
-    return "\t" + rental.movie.title + "\t" + this.calculatePrice(rental).toFixed(1) + "\n";
-  }
+  private generateStatementStart = () => "Rental Record for " + this.name + "\n";
+  private generateStatementLines = () => this.rentals.reduce((acc, rental) => (acc + rental.getStatement()), "");
+  private generateStatementFooter = () => "Amount owed is " + this.calculateTotalPrice().toFixed(1) + "\n";
+  private generateStatementEnd = () => "You earned " + this.calculateFrequentRenterPoints() + " frequent renter points";
 
-  private calculatePrice(rental: Rental): number {
-    switch (rental.movie.movieCategory) {
-      case MovieCategory.REGULAR:
-        return rental.days <= 2 ? 2 : 2 + (rental.days - 2) * 1.5
-      case MovieCategory.NEW_RELEASE:
-        return rental.days * 3;
-      case MovieCategory.CHILDRENS:
-        return rental.days <= 3 ? 1.5 : 1.5 + (rental.days - 3) * 1.5;
-      default: return 0;
-    }
-  }
+  private calculateTotalPrice = () => this.rentals.map(rental => rental.getPrice()).reduce((a, b) => a + b, 0);
 
-  private calculateTotalPrice(): number {
-    return this.rentals.map(rental => this.calculatePrice(rental)).reduce((a, b) => a + b, 0);
-  }
+  private calculateFrequentRenterPoints = () => this.rentals.map(rental => rental.calculateFrequentRenterPoints()).reduce((a, b) => a + b, 0);
 
-  private calculateFrequentRenterPoints() {
-    return this.rentals.map(rental => this.calculateFrequentRenterPointsForRental(rental)).reduce((a, b) => a + b, 0);
-  }
-
-  public generateStatement(): string {
-
-    const statementStart = "Rental Record for " + this.name + "\n"
-
-    const statementLines = this.rentals.reduce( (acc, rental) => ( acc + this.getStatementLine(rental) ) , "")
-
-    const statementFooter = "Amount owed is " + this.calculateTotalPrice().toFixed(1) + "\n";
-
-    const statementEnd = "You earned " + this.calculateFrequentRenterPoints() + " frequent renter points";
-
-    return statementStart + statementLines + statementFooter + statementEnd;
-
-  }
-
-
-
+  
 
 }
