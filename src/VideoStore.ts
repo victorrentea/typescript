@@ -1,7 +1,7 @@
 export class Movie {
   public title: string;
   public movieCategory: MovieCategory;
-  constructor(title: string, movieCategory: number) {
+  constructor(title: string, movieCategory: MovieCategory) {
     this.title = title;
     this.movieCategory = movieCategory;
   }
@@ -10,10 +10,10 @@ export class Movie {
 type Rental = { movie: Movie, daysRenting: number };
 
 export enum MovieCategory {
-  REGULAR= 0,
-  NEW_RELEASE= 1,
-  CHILDRENS= 2,
-};
+  REGULAR = 'REGULAR',
+  NEW_RELEASE = 'NEW_RELEASE',
+  CHILDRENS = 'CHILDRENS',
+}
 
 const moviePricing:Record<MovieCategory, {basePrice:number,dayRentingCutoff:number,extraMultiplier:number}> = {
     [MovieCategory.REGULAR]: {basePrice: 2, extraMultiplier: 1.5, dayRentingCutoff: 2},
