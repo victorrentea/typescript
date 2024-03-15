@@ -1,80 +1,74 @@
-export class Movie {
-  public title: string;
-  public priceCode: number;
 
-  constructor(title: string, priceCode: number) {
-    this.title = title;
-    this.priceCode = priceCode;
-  }
-}
-
-export enum MOVIE_CATEGORY {
-  CHILDRENS = 2,
-  REGULAR = 0,
-  NEW_RELEASE = 1
+export enum PriceCode {
+  REGULAR = 'REGULAR',
+  NEW_RELEASE = 'NEW_RELEASE',
+  CHILDRENS = 'CHILDRENS'
 };
+
+export class Movie {
+  constructor(public readonly title: string, public readonly priceCode: PriceCode) { }
+}
 
 
 class Rental {
-  public movie: Movie;
-  public daysRented: number;
+  constructor(private readonly movie: Movie, private readonly daysRented: number) { }
 
-  constructor(movie: Movie, daysRented: number) {
-    this.movie = movie;
-    this.daysRented = daysRented;
+  get isEligableForBonusPoints(): boolean {
+    return this.movie.priceCode === PriceCode.NEW_RELEASE && this.daysRented > 1
   }
 
   get price() {
-    let thisAmount = 0;
+    const LATE_FEE = 1.5;
+    const calculateLateFee = (daysRented: number, maxDaysRented: number) => Math.max(0, daysRented - maxDaysRented) * LATE_FEE;
+
     switch (this.movie.priceCode) {
-      case MOVIE_CATEGORY.REGULAR:
-        thisAmount += 2;
-        if (this.daysRented > 2)
-          thisAmount += (this.daysRented - 2) * 1.5;
-        break;
-      case MOVIE_CATEGORY.NEW_RELEASE:
-        thisAmount += this.daysRented * 3;
-        break;
-      case MOVIE_CATEGORY.CHILDRENS:
-        thisAmount += 1.5;
-        if (this.daysRented > 3)
-          thisAmount += (this.daysRented - 3) * 1.5;
-        break;
+      case PriceCode.NEW_RELEASE:
+        return this.daysRented * 3;
+      case PriceCode.REGULAR:
+        return 2 + calculateLateFee(this.daysRented, 2);
+      case PriceCode.CHILDRENS:
+        return 1.5 + calculateLateFee(this.daysRented, 3);
     }
-    return thisAmount;
+  }
+
+  public printableSummary(): string {
+    return `\t${this.movie.title}\t${this.price.toFixed(1)}\n`;
   }
 }
 
 
 export class Customer {
-  private name: string;
   private rentals: Rental[] = [];
-  private frequentRenterPoints: number = 0;
 
-  constructor(name: string) {
-    this.name = name;
+  constructor(private readonly name: string) {
+  }
+
+  get frequentRenterPoints() {
+    return this.rentals.filter(r => r.isEligableForBonusPoints).length + this.rentals.length;
+  }
+
+  get totalAmount() {
+    return this.rentals.reduce((acc, rental) => acc + rental.price, 0);
+  }
+
+  printableRentalSummaries() {
+    return this.rentals.map((rental) => rental.printableSummary()).join('');
   }
 
   public addRental(movie: Movie, daysRented: number) {
     this.rentals.push(new Rental(movie, daysRented));
-    this.frequentRenterPoints++;
-    if (movie.priceCode != null &&
-      (movie.priceCode == MOVIE_CATEGORY.NEW_RELEASE)
-      && daysRented > 1)
-      this.frequentRenterPoints++;
   }
 
-  public statement(): string {
+  public getRentalRecordSummary(): string {
+    const summaryHeader = "Rental Record for " + this.name + "\n";
 
-    const totalRentalsInfoLine = "Rental Record for " + this.name + "\n";
+    const amountOwedSummary = "Amount owed is " + this.totalAmount.toFixed(1) + "\n";
 
-    const individualRentalInfos = this.rentals.map((rental) => { return `\t${rental.movie.title}\t${rental.price.toFixed(1)}\n` });
+    const frequentRenterPointsSummary = "You earned " + this.frequentRenterPoints + " frequent renter points";
 
-    const totalAmount = this.rentals.reduce((acc, rental) => acc + rental.price, 0);
-
-    const footerLine = "Amount owed is " + totalAmount.toFixed(1) + "\n";
-    const eaarnedLine = "You earned " + this.frequentRenterPoints + " frequent renter points";
-    return `${totalRentalsInfoLine}${individualRentalInfos.join('')}${footerLine}${eaarnedLine}`;
-
+    return summaryHeader +
+      this.printableRentalSummaries() +
+      amountOwedSummary +
+      frequentRenterPointsSummary;
   }
 }
