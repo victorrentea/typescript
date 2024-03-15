@@ -9,25 +9,30 @@ export class Movie {
   constructor(public readonly title: string, public readonly priceCode: PriceCode) { }
 }
 
-
 class Rental {
-  constructor(private readonly movie: Movie, private readonly daysRented: number) { }
+  constructor(private readonly movie: Movie, private readonly daysRented: number) {
+    if (daysRented < 1) throw new Error('Days rented must be greater than 0');
+  }
 
   get isEligableForBonusPoints(): boolean {
-    return this.movie.priceCode === PriceCode.NEW_RELEASE && this.daysRented > 1
+    return this.movie.priceCode === PriceCode.NEW_RELEASE
   }
 
   get price() {
     const LATE_FEE = 1.5;
     const calculateLateFee = (daysRented: number, maxDaysRented: number) => Math.max(0, daysRented - maxDaysRented) * LATE_FEE;
 
+    const REGULAR_PRICE_FIXED = 2;
+    const CHILDRENS_PRICE_FIXED = 1.5;
+    const NEW_RELEASE_PRICE_PER_DAY = 3;
+
     switch (this.movie.priceCode) {
       case PriceCode.NEW_RELEASE:
-        return this.daysRented * 3;
+        return NEW_RELEASE_PRICE_PER_DAY * this.daysRented;
       case PriceCode.REGULAR:
-        return 2 + calculateLateFee(this.daysRented, 2);
+        return REGULAR_PRICE_FIXED + calculateLateFee(this.daysRented, 2);
       case PriceCode.CHILDRENS:
-        return 1.5 + calculateLateFee(this.daysRented, 3);
+        return CHILDRENS_PRICE_FIXED + calculateLateFee(this.daysRented, 3);
     }
   }
 
@@ -36,39 +41,40 @@ class Rental {
   }
 }
 
-
 export class Customer {
   private rentals: Rental[] = [];
 
-  constructor(private readonly name: string) {
-  }
+  constructor(private readonly name: string) { }
 
   get frequentRenterPoints() {
-    return this.rentals.filter(r => r.isEligableForBonusPoints).length + this.rentals.length;
+    const bonusPoints = this.rentals.filter(rental => rental.isEligableForBonusPoints).length;
+    return this.rentals.length + bonusPoints;
   }
 
   get totalAmount() {
     return this.rentals.reduce((acc, rental) => acc + rental.price, 0);
   }
 
-  printableRentalSummaries() {
-    return this.rentals.map((rental) => rental.printableSummary()).join('');
-  }
-
   public addRental(movie: Movie, daysRented: number) {
     this.rentals.push(new Rental(movie, daysRented));
   }
 
-  public getRentalRecordSummary(): string {
-    const summaryHeader = "Rental Record for " + this.name + "\n";
-
-    const amountOwedSummary = "Amount owed is " + this.totalAmount.toFixed(1) + "\n";
-
-    const frequentRenterPointsSummary = "You earned " + this.frequentRenterPoints + " frequent renter points";
-
-    return summaryHeader +
-      this.printableRentalSummaries() +
-      amountOwedSummary +
-      frequentRenterPointsSummary;
+  public getRentalsRecordSummary(): string {
+    return this.summaryHeader() +
+      this.printableRentalsSummary() +
+      this.amountOwedSummary() +
+      this.frequentRenterPointsSummary();
   }
+
+  private summaryHeader = () =>
+    "Rental Record for " + this.name + "\n";
+
+  private printableRentalsSummary = () =>
+    this.rentals.map((rental) => rental.printableSummary()).join('');
+
+  private amountOwedSummary = () =>
+    "Amount owed is " + this.totalAmount.toFixed(1) + "\n";
+
+  private frequentRenterPointsSummary = () =>
+    "You earned " + this.frequentRenterPoints + " frequent renter points";
 }

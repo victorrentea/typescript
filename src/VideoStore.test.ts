@@ -18,6 +18,6 @@ describe('Videostore', () => {
       + "Amount owed is 32.0\n"
       + "You earned 4 frequent renter points";
 
-    expect(customer.getRentalRecordSummary()).to.equal(expected);
+    expect(customer.getRentalsRecordSummary()).to.equal(expected);
   });
 });
