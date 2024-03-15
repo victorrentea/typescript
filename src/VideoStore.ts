@@ -7,10 +7,11 @@ export enum MovieCategory {
 type Rental = {
   movie: Movie;
   basePrice: number;
-};
+}
 
 export class Movie {
-  constructor(public title: string, public priceCode: MovieCategory) {}
+  constructor(public readonly title: string,
+              public readonly priceCode: MovieCategory) {}
 }
 
 export class Customer {
