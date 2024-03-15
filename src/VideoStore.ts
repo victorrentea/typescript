@@ -8,29 +8,45 @@ export enum MovieCategory {
   NEW_RELEASE = 'new release',
 }
 
-type Rental = { // TODO wrong naming convention -> MovieCategory
+type Rental = {
   movie: Movie;
-  number: number;
+  basePrice: number;
 };
+
 export class Customer {
   private rentals: Rental[] = [];
 
   constructor(private readonly name: string) {}
 
-  public addRental(m: Movie, d: number) {
-    this.rentals.push({ number: d, movie: m });
+  public addRental(movie: Movie, basePrice: number) {
+    this.rentals.push({ basePrice, movie });
   }
 
+  private getStatement = (rental: Rental) => "\t" + rental.movie.title + "\t" + rental.basePrice.toFixed(1) + "\n";
+
+  private getStatementLine = () => this.rentals.reduce((acc, rental) => {
+      return acc + this.getStatement(rental);
+    }, "Rental Record for " + this.name + "\n");
+
   public statement(): string {
-    let totalAmount: number = 0;
     let frequentRenterPoints = 0;
 
-    let result = "Rental Record for " + this.name + "\n";
+    const line = this.getStatementLine();
+
+    let result = '';
+
+    const calcPrice = (acc: number, rental: Rental) => {
+      const moviePrice = this.getPriceByCategory(rental.movie, rental.basePrice);
+      return acc + moviePrice;
+    }
+
+    const totalPrice = this.rentals.reduce(calcPrice, 0);
+
     for (const rental of this.rentals) {
       let movie = rental.movie; // let
-      let basePrice = rental.number;
+      let basePrice = rental.basePrice;
       // determine amounts for each line
-      const moviePrice = this.getPriceByCategory(movie, basePrice);
+
       // add frequent renter points
       frequentRenterPoints++;
       // add bonus for a two day new release rental
@@ -41,11 +57,10 @@ export class Customer {
       )
         frequentRenterPoints++;
       // show figures line for this rental
-      result += "\t" + movie.title + "\t" + moviePrice.toFixed(1) + "\n";
-      totalAmount += moviePrice;
+      // result += "\t" + movie.title + "\t" + moviePrice.toFixed(1) + "\n";
     }
     // add footer lines
-    result += "Amount owed is " + totalAmount.toFixed(1) + "\n";
+    result += "Amount owed is " + totalPrice.toFixed(1) + "\n";
     result += "You earned " + frequentRenterPoints + " frequent renter points";
     return result;
   }
