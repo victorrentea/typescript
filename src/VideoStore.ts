@@ -7,13 +7,13 @@ export class Movie {
   }
 }
 
-export const MOVIE_CATEGORY = { // wrong naming convention
+export const MOVIE_CATEGORY = { // TODO wrong naming convention -> MovieCategory
   CHILDREN: 2,
   REGULAR: 0,
   NEW_RELEASE: 1,
 };
 
-type RENTAL = {
+type RENTAL = { // TODO wrong naming convention -> MovieCategory
   movie: Movie;
   number: number;
 };
