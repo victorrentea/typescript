@@ -1,9 +1,9 @@
 export class Movie {
   public title: string;
-  public priceCode: MOVIE_CATEGORY;
+  public priceCode: MovieCategory;
 }
 
-export enum MOVIE_CATEGORY {
+export enum MovieCategory {
   CHILDRENS,
   REGULAR,
   NEW_RELEASE
@@ -23,44 +23,49 @@ export class Customer {
     this.name = name;
   }
 
-  public addRental(movie: Movie, days: number): void {
-    this.rentals.push({days, movie});
+  public addRental(rental: Rental): void {
+    this.rentals.push(rental);
   }
 
-  public statement(): string {
-    let totalAmount: number = 0;
-    let frequentRenterPoints = 0;
+  private calculateFrequentRenterPoints(rental: Rental): number {
+    if (rental.movie.priceCode != null &&
+      (rental.movie.priceCode == MovieCategory.NEW_RELEASE)
+      && rental.days > 1
+    ) {
+      return 2
+    } 
+    return 1
+  }
 
-    let result = "Rental Record for " + this.name + "\n";
-    for (const rental of this.rentals) {
-      // determine amounts for each line
-      const thisAmount = determAmount(rental);
-      // add frequent renter points
-      frequentRenterPoints++;
-      // add bonus for a two day new release rental
-      if (rental.movie.priceCode != null &&
-          (rental.movie.priceCode == MOVIE_CATEGORY.NEW_RELEASE)
-          && rental.days > 1)
-        frequentRenterPoints++;
-      // show figures line for this rental
-      result += "\t" + rental.movie.title + "\t" + thisAmount.toFixed(1) + "\n";
-      totalAmount += thisAmount;
-    }
-    // add footer lines
-    result += "Amount owed is " + totalAmount.toFixed(1) + "\n";
-    result += "You earned " + frequentRenterPoints + " frequent renter points";
-    return result;
+  private getStatementLine(rental: Rental): string {
+    return "\t" + rental.movie.title + "\t" + this.calculatePrice(rental).toFixed(1) + "\n";
+  }
 
-    function determAmount(rental: Rental) {
-      switch (rental.movie.priceCode) {
-        case MOVIE_CATEGORY.REGULAR:
-          return rental.days <= 2 ? 2 : 2 + (rental.days - 2) * 1.5
-        case MOVIE_CATEGORY.NEW_RELEASE:
-          return rental.days * 3;
-        case MOVIE_CATEGORY.CHILDRENS:
-          return rental.days <= 3 ? 1.5 : 1.5 + (rental.days - 3) * 1.5;
-        default: return 0;
-      }
+  private calculatePrice(rental: Rental): number {
+    switch (rental.movie.priceCode) {
+      case MovieCategory.REGULAR:
+        return rental.days <= 2 ? 2 : 2 + (rental.days - 2) * 1.5
+      case MovieCategory.NEW_RELEASE:
+        return rental.days * 3;
+      case MovieCategory.CHILDRENS:
+        return rental.days <= 3 ? 1.5 : 1.5 + (rental.days - 3) * 1.5;
+      default: return 0;
     }
+  }
+
+  public generateStatement(): string {
+
+    const statementStart = "Rental Record for " + this.name + "\n"
+
+    const statementLines = this.rentals.reduce( (acc, rental) => ( acc + this.getStatementLine(rental) ) , "")
+
+    const totalPrice: number = this.rentals.map( rental => this.calculatePrice(rental) ).reduce( (a,b) => a + b, 0)
+    const statementFooter = "Amount owed is " + totalPrice.toFixed(1) + "\n";
+
+    const frequentRenterPoints = this.rentals.map( rental => this.calculateFrequentRenterPoints(rental) ).reduce((a,b) => a + b, 0)
+    const statementEnd = "You earned " + frequentRenterPoints + " frequent renter points";
+
+    return statementStart + statementLines + statementFooter + statementEnd;
+
   }
 }
