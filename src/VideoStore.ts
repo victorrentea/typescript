@@ -10,11 +10,12 @@ export class Movie {
 }
 
 class Rental {
-  constructor(private readonly movie: Movie, private readonly daysRented: number) {
-    if (daysRented < 1) throw new Error('Days rented must be greater than 0');
+  constructor(private readonly movie: Movie,
+              private readonly daysRented: number) {
+    if (daysRented <= 0) throw new Error('Days rented must be greater than 0');
   }
 
-  get isEligableForBonusPoints(): boolean {
+  get isEligibleForBonusPoints(): boolean {
     return this.movie.priceCode === PriceCode.NEW_RELEASE
   }
 
@@ -47,7 +48,7 @@ export class Customer {
   constructor(private readonly name: string) { }
 
   get frequentRenterPoints() {
-    const bonusPoints = this.rentals.filter(rental => rental.isEligableForBonusPoints).length;
+    const bonusPoints = this.rentals.filter(rental => rental.isEligibleForBonusPoints).length;
     return this.rentals.length + bonusPoints;
   }
 
