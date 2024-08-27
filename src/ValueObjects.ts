@@ -2,11 +2,7 @@ import {expect} from "chai";
 
 function filterCarModels(criteria: CarSearchCriteria, models: CarModel[]): CarModel[] {
 // new collection, less noise , FP ftw!
-    return models.filter(model =>
-        new Interval(model.startYear, model.endYear)
-            .intersect(
-                new Interval(criteria.startYear, criteria.endYear)
-            ));
+    return models.filter(model => model.getYearInterval().intersect(criteria.getYearInterval()));
 }
 
 
@@ -22,12 +18,16 @@ class Interval {
 }
 
 
-class CarSearchCriteria { // comes from JSON
+class CarSearchCriteria {
     constructor(public readonly startYear: number,
                 public readonly endYear: number,
                 public readonly make: string) {
         if (startYear > endYear) throw new Error("start larger than end");
     }
+
+    getYearInterval(): Interval {
+        return new Interval(this.startYear, this.endYear);
+    } // comes from JSON
 }
 
 class CarModel { // from my private DB = Domain Model
@@ -38,6 +38,10 @@ class CarModel { // from my private DB = Domain Model
         if (startYear > endYear) {
             throw new Error("start larger than end");
         }
+    }
+
+    getYearInterval() {
+        return new Interval(this.startYear, this.endYear);
     }
 }
 
