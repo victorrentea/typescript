@@ -34,9 +34,10 @@ export class Customer {
       // determine amounts for each line
       switch (each.priceCode) {
         case MOVIE_CATEGORY.REGULAR:
-          thisAmount += 2;
-          if (dr > 2)
-            thisAmount += (dr - 2) * 1.5;
+          const bad = 2; // bad excraction: the 2 means different thinhs; price and days.
+          thisAmount += bad;
+          if (dr > bad)
+            thisAmount += (dr - bad) * 1.5;
           break;
         case MOVIE_CATEGORY.NEW_RELEASE:
           thisAmount += dr * 3;

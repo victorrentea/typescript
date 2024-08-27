@@ -1,12 +1,10 @@
 import {expect} from "chai";
 
 function filterCarModels(criteria: CarSearchCriteria, models: CarModel[]): CarModel[] {
-  for (let i = 0; i < models.length; i++) {
-    if (!MathUtil.intervalsIntersect(models[i].startYear, models[i].endYear, criteria.startYear, criteria.endYear)) {
-      models.splice(i, 1);
-      i--;
-    }
-  }
+// new collection, less noise , FP ftw!
+  models = models.filter(model =>
+      MathUtil.intervalsIntersect(model.startYear, model.endYear, criteria.startYear, criteria.endYear));
+
   console.log("More filtering logic");
   return models;
 }
@@ -22,7 +20,7 @@ class MathUtil {
 }
 
 
-class CarSearchCriteria {
+class CarSearchCriteria { // comes from JSON
   constructor(public readonly startYear: number,
               public readonly endYear: number,
               public readonly make: string) {
@@ -30,7 +28,7 @@ class CarSearchCriteria {
   }
 }
 
-class CarModel {
+class CarModel { // from my private DB = Domain Model
   constructor(public readonly make: string,
               public readonly model: string,
               public readonly startYear: number,
