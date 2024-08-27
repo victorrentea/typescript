@@ -3,24 +3,22 @@ import {expect} from "chai";
 function filterCarModels(criteria: CarSearchCriteria, models: CarModel[]): CarModel[] {
 // new collection, less noise , FP ftw!
   return models.filter(model =>
-      MathUtil.intervalsIntersect2({start: model.startYear, end: model.endYear}, {
-        start: criteria.startYear,
-        end: criteria.endYear
-      }));
+      new Interval(model.startYear, model.endYear)
+          .intersect(new Interval(criteria.startYear, criteria.endYear)
+          ));
 }
 
 
-class MathUtil {
-  // more semantics but harder to call
-  static intervalsIntersect2(interval1: Interval, interval2: Interval): boolean {
-    return interval1.start <= interval2.end && interval2.start <= interval1.end;
-  }
-}
 
 // type Interval = [number, number];
-interface Interval {
-  start: number;
-  end: number;
+class Interval {
+  constructor(public readonly start: number, public readonly end: number) {
+    if (start > end) throw new Error("start larger than end");
+  }
+
+  intersect(other: Interval): boolean {
+    return this.start <= other.end && other.start <= this.end;
+  }
 }
 
 
