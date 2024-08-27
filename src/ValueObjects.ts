@@ -3,8 +3,7 @@ import {expect} from "chai";
 
 function filterCarModels(criteria: CarSearchCriteria, models: CarModel[]): CarModel[] {
 // new collection, less noise , FP ftw!
-    return models.filter(model =>
-        MathUtil.f(model, criteria));
+    return models.filter(model => model.intersectsCriteriaYears(criteria));
 }
 
 function applyCapacityFilter() {
@@ -12,9 +11,7 @@ function applyCapacityFilter() {
 }
 
 class MathUtil {
-    static f(model: CarModel, criteria: CarSearchCriteria) {
-        return MathUtil.intervalsIntersect(model.startYear, model.endYear, criteria.startYear, criteria.endYear);
-    }
+
 
     static intervalsIntersect(start1: number, end1: number, start2: number, end2: number): boolean {
         return start1 <= end2 && start2 <= end1;
@@ -38,6 +35,10 @@ class CarModel { // from my private DB = Domain Model
         if (startYear > endYear) {
             throw new Error("start larger than end");
         }
+    }
+
+    intersectsCriteriaYears(criteria: CarSearchCriteria) {
+        return MathUtil.intervalsIntersect(this.startYear, this.endYear, criteria.startYear, criteria.endYear);
     }
 }
 
