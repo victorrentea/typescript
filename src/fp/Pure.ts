@@ -39,18 +39,22 @@ class Coupon {
 type Customer = {
     coupons(): Coupon[];
 };
-type CustomerApi = {
-    findById(id: number): Customer;
-};
-type ThirdPartyPricesApi = {
-    fetchPrice(productId: number): number;
-};
-type CouponApi = {
-    markUsedCoupons(customerId: number, usedCoupons: Coupon[]): void;
-};
-type ProductApi = {
-    findAllById(productIds: number[]): Product[];
-};
+
+interface CustomerApi {
+    findById(id: number): Promise<Customer>;
+}
+
+interface ThirdPartyPricesApi {
+    fetchPrice(productId: number): Promise<number>;
+}
+
+interface CouponApi {
+    markUsedCoupons(customerId: number, usedCoupons: Coupon[]): Promise<void>;
+}
+
+interface ProductApi {
+    findAllById(productIds: number[]): Promise<Product[]>;
+}
 
 class Pure {
     constructor(
@@ -62,16 +66,16 @@ class Pure {
     }
 
     // TODO extract a pure function with as much logic possible
-    computePrices(customerId: number, productIds: number[], internalPrices: Map<number, number>): Map<number, number> {
-        const customer: Customer = this.customerApi.findById(customerId);
-        const products: Product[] = this.productApi.findAllById(productIds);
+    async computePrices(customerId: number, productIds: number[], internalPrices: Map<number, number>): Promise<Map<number, number>> {
+        const customer: Customer = await this.customerApi.findById(customerId);
+        const products: Product[] = await this.productApi.findAllById(productIds);
 
         const usedCoupons: Coupon[] = [];
         const finalPrices: Map<number, number> = new Map<number, number>();
         for (const product of products) {
             let price: number | undefined = internalPrices.get(product.id);
             if (price === undefined) {
-                price = this.thirdPartyPricesApi.fetchPrice(product.id);
+                price = await this.thirdPartyPricesApi.fetchPrice(product.id);
             }
             for (const coupon of customer.coupons()) {
                 if (coupon.autoApply && coupon.isApplicableFor(product) && !usedCoupons.includes(coupon)) {
@@ -82,7 +86,7 @@ class Pure {
             finalPrices.set(product.id, price);
         }
 
-        this.couponRepo.markUsedCoupons(customerId, usedCoupons);
+        await this.couponRepo.markUsedCoupons(customerId, usedCoupons);
         return finalPrices;
     }
 }
