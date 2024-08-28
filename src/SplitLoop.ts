@@ -26,7 +26,9 @@ export function computeStatsHard(employees: Employee[], retrieveSalary: (employe
             if (employee.salary > 3000) {
                 consultantsPaidOver3K.push(employee);
             }
-        } else {
+        }
+
+        if (!employee.isConsultant) {
             totalEmpAge += employee.age;
         }
     }
