@@ -107,17 +107,7 @@ class Pure {
         const customer = await this.customerApi.findById(customerId); // IO: GET/SELECT .. WHERE ID = ?
         const products = await this.productApi.findAllById(productIds);  // GET many?id=1,2,3/SELECT .. WHERE ID IN (?, ?, ?)
 
-        const resolvedPrices = await this.resolvePrices(products, internalPrices);
-
-        // not desireable to return mutliple values from a single function
-        const {usedCoupons, finalPrices} = Pure.applyCoupons(products, resolvedPrices, customer);
-        // const {usedCoupons, finalPrices} = Pure.applyCoupons(products, resolvedPrices, customer);
-
-        await this.couponRepo.markUsedCoupons(customerId, usedCoupons); // INSERT // side effect
-        return finalPrices;
-    }
-
-    private async resolvePrices(products: Product[], internalPrices: Map<number, number>) {
+        // low lebvel
         const resolvedPrices = new Map<number, number>();
         for (const product of products) {
             let price: number | undefined = internalPrices.get(product.id);
@@ -128,6 +118,14 @@ class Pure {
             // finalPrices.set(product.id, price); // BAD: because the map values now carry different meanings in different parts of the code
             resolvedPrices.set(product.id, price);
         }
-        return resolvedPrices;
+
+        // high level flow contrl
+        // not desireable to return mutliple values from a single function
+        const {usedCoupons, finalPrices} = Pure.applyCoupons(products, resolvedPrices, customer);
+        // const {usedCoupons, finalPrices} = Pure.applyCoupons(products, resolvedPrices, customer);
+
+        await this.couponRepo.markUsedCoupons(customerId, usedCoupons); // INSERT // side effect
+        return finalPrices;
     }
+
 }
