@@ -34,7 +34,9 @@ class CarModel { // from my private DB = Domain Model
     constructor(public readonly make: string,
                 public readonly model: string,
                 public readonly startYear: number,
-                public readonly endYear: number) {
+                public readonly endYear: number
+                // public readonly yearInterval: Interval // doable only on private datastructure, not API DTOs
+    ) {
         if (startYear > endYear) {
             throw new Error("start larger than end");
         }
