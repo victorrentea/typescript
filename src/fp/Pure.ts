@@ -66,15 +66,19 @@ class Pure {
     }
 
     // TODO extract a pure function with as much logic possible
-    async computePrices(customerId: number, productIds: number[], internalPrices: Map<number, number>): Promise<Map<number, number>> {
+    async computePrices(customerId: number,
+                        productIds: number[],
+                        internalPrices: Map<number, number>
+    ): Promise<Map<number, number>> {
+
         const customer: Customer = await this.customerApi.findById(customerId);
         const products: Product[] = await this.productApi.findAllById(productIds);
 
         const usedCoupons: Coupon[] = [];
-        const finalPrices: Map<number, number> = new Map<number, number>();
+        const finalPrices = new Map<number, number>();
         for (const product of products) {
             let price: number | undefined = internalPrices.get(product.id);
-            if (price === undefined) {
+            if (!price) {
                 price = await this.thirdPartyPricesApi.fetchPrice(product.id);
             }
             for (const coupon of customer.coupons()) {
