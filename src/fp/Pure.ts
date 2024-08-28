@@ -71,15 +71,15 @@ class Pure {
                         internalPrices: Map<number, number>
     ): Promise<Map<number, number>> {
 
-        const customer: Customer = await this.customerApi.findById(customerId);
-        const products: Product[] = await this.productApi.findAllById(productIds);
+        const customer = await this.customerApi.findById(customerId); // IO: GET/SELECT .. WHERE ID = ?
+        const products = await this.productApi.findAllById(productIds);  // GET many?id=1,2,3/SELECT .. WHERE ID IN (?, ?, ?)
 
-        const usedCoupons: Coupon[] = [];
+        const usedCoupons: Coupon[] = []; // accumulator variables
         const finalPrices = new Map<number, number>();
         for (const product of products) {
             let price: number | undefined = internalPrices.get(product.id);
             if (!price) {
-                price = await this.thirdPartyPricesApi.fetchPrice(product.id);
+                price = await this.thirdPartyPricesApi.fetchPrice(product.id); // GET
             }
             for (const coupon of customer.coupons()) {
                 if (coupon.autoApply && coupon.isApplicableFor(product) && !usedCoupons.includes(coupon)) {
@@ -90,7 +90,7 @@ class Pure {
             finalPrices.set(product.id, price);
         }
 
-        await this.couponRepo.markUsedCoupons(customerId, usedCoupons);
+        await this.couponRepo.markUsedCoupons(customerId, usedCoupons); // INSERT // side effect
         return finalPrices;
     }
 }
