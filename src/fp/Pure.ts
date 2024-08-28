@@ -11,6 +11,7 @@ type Product = {
     isPremium: boolean;
     id: number;
     isDeleted: boolean;
+    // resolvedPrice?: number; // N!O!
 };
 
 class Coupon {
@@ -71,16 +72,28 @@ class Pure {
                         internalPrices: Map<number, number>
     ): Promise<Map<number, number>> {
 
+        //aplied split phase refactor
+        // phase 1: fetch data
         const customer = await this.customerApi.findById(customerId); // IO: GET/SELECT .. WHERE ID = ?
         const products = await this.productApi.findAllById(productIds);  // GET many?id=1,2,3/SELECT .. WHERE ID IN (?, ?, ?)
 
-        const usedCoupons: Coupon[] = []; // accumulator variables
-        const finalPrices = new Map<number, number>();
+        // phase 2: resolve prices
+        const resolvedPrices = new Map<number, number>();
         for (const product of products) {
             let price: number | undefined = internalPrices.get(product.id);
             if (!price) {
                 price = await this.thirdPartyPricesApi.fetchPrice(product.id); // GET
             }
+            // product.resolvedPrice = price; // BAD: temporary field code smell, abusing our core object burdening it with extra temporary data.
+            // finalPrices.set(product.id, price); // BAD: because the map values now carry different meanings in different parts of the code
+            resolvedPrices.set(product.id, price);
+        }
+
+        // phase 3: apply coupons
+        const usedCoupons: Coupon[] = []; // accumulator variables
+        const finalPrices = new Map<number, number>();
+        for (const product of products) {
+            let price = resolvedPrices.get(product.id);
             for (const coupon of customer.coupons()) {
                 if (coupon.autoApply && coupon.isApplicableFor(product) && !usedCoupons.includes(coupon)) {
                     price = coupon.apply(product, price);
@@ -90,6 +103,7 @@ class Pure {
             finalPrices.set(product.id, price);
         }
 
+        // phase 4: side effects
         await this.couponRepo.markUsedCoupons(customerId, usedCoupons); // INSERT // side effect
         return finalPrices;
     }
