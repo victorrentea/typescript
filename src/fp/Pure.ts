@@ -6,6 +6,19 @@ enum ProductCategory {
     UNCATEGORIZED
 }
 
+type CustomerId = string
+type ProductId = string
+
+const customerId: CustomerId = "123";
+const productId: ProductId = "456";
+
+f(customerId, productId);
+f(productId, customerId);
+
+function f(c: CustomerId, p: ProductId) {
+
+}
+
 type Product = {
     category: ProductCategory;
     isPremium: boolean;
