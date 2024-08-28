@@ -10,13 +10,16 @@ export type Employee = {
 export function computeStatsHard(employees: Employee[], retrieveSalary: (employeeId: number) => number | null): string {
     const consultantsPaidOver3K: Employee[] = [];
 
-    for (const employee of employees) {
-        if (employee.isConsultant) {
-            if (employee.id == null) {
-                return "Employee(s) not persisted";
-            }
-        }
-    }
+    // for (const employee of employees) {
+    //     if (employee.isConsultant) {
+    //         if (employee.id == null) {
+    //             return "Employee(s) not persisted";
+    //         }
+    //     }
+    // }
+    if (employees.find(e => e.isConsultant && e.id == null))
+        return "Employee(s) not persisted";
+
 
 
     const totalEmpAge = employees.filter(e => !e.isConsultant)
