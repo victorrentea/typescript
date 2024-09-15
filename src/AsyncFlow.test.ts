@@ -49,6 +49,9 @@ describe('suggestAttractions', () => {
 
   it('duration', async () => {
     weather = 'sunny';
+    attractions.push({...attractions[0], id: 3});
+    attractions.push({...attractions[0], id: 4});
+    attractions.push({...attractions[0], id: 5});
     call_delay_ms = 100;
 
     const start = Date.now();
@@ -57,7 +60,7 @@ describe('suggestAttractions', () => {
 
     console.log("Took " + duration);
     // TODO add time constraints as needed
-    expect(results).to.have.length(2);
+    expect(results).to.have.length(attractions.length);
   });
 
 });
