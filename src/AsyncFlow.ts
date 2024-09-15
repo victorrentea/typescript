@@ -21,18 +21,22 @@ export interface Attraction {
 
 export async function suggestAttractions(cityId: string, apis: Apis): Promise<Array<Attraction>> {
   const attractions = await apis.fetchAttractions(cityId);
-  const details = await Promise.all(attractions.map(attraction => apis.fetchAttractionDetails(attraction.id)));
-  const weather = await apis.fetchWeather(cityId);
 
-  const results = details.filter(detail => matchesWeather(weather, detail))
-    .sort((a, b) => b.ratingStars - a.ratingStars)
-    .map((d) => ({
-      id: d.id,
-      name: d.name,
-      rating: d.ratingStars,
-      location: d.location
-    }));
-  console.log("Results: ", results);
+  const results = new Array<Attraction>();
+  for (const attraction of attractions) {
+    const details = await apis.fetchAttractionDetails(attraction.id);
+    if (matchesWeather(await apis.fetchWeather(cityId), details)) {
+      results.push({
+        id: details.id,
+        name: details.name,
+        rating: details.ratingStars,
+        location: details.location
+      });
+    }
+  }
+  results.sort(function (a, b) {
+    return b.rating - a.rating;
+  });
   return results;
 }
 

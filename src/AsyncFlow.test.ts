@@ -37,6 +37,7 @@ describe('suggestAttractions', () => {
     weather = 'sunny';
     const results = await suggestAttractions('city1', apis);
 
+    console.log("Results: ", results);
     expect(results.map(r => r.id)).to.eql([2, 1]);
   });
 
@@ -44,6 +45,7 @@ describe('suggestAttractions', () => {
     weather = 'rainy';
     const results = await suggestAttractions('city1', apis);
 
+    console.log("Results: ", results);
     expect(results.map(r => r.id)).to.eql([1]);
   });
 
