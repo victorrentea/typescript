@@ -1,15 +1,28 @@
 import {expect} from "chai";
 
+function matchesYears(carModel: CarModel, criteria: CarSearchCriteria): boolean {
+  return MathUtil.intervalsIntersect(carModel.startYear, carModel.endYear, criteria.startYear, criteria.endYear);
+}
+
 function filterCarModels(criteria: CarSearchCriteria, models: CarModel[]): CarModel[] {
-  for (let i = 0; i < models.length; i++) {
-    if (!MathUtil.intervalsIntersect(models[i].startYear, models[i].endYear, criteria.startYear, criteria.endYear)) {
+  for (let i = 0; i < models.length; i++) { // if you think you find a BUG while refactoring, DON'T FIX IT! (especially n old code)
+    // PO said it's a bug, but users complained about it, so we kept and cherished THE BUG!
+    // for (let i = models.length-1; i>=0;i--) { // correct
+    if (!matchesYears(models[i], criteria)) {
       models.splice(i, 1);
-      i--;
+      i--; // life-savior!
     }
   }
   console.log("More filtering logic");
   return models;
 }
+
+// refactoring !== fix bugs
+// refactoring !== improving performance(slow thinking mode). but the first 80% of any performance improvement is refactoring
+//    you open the code to improve performance only based on numbers. not based on feelings.
+// refactoring !== adding behavior
+// refactoring === improving readability doing the same (buggy) thing
+
 
 function applyCapacityFilter() {
   console.log(MathUtil.intervalsIntersect(1000, 1600, 1250, 2000));
