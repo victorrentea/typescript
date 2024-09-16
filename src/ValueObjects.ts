@@ -1,7 +1,15 @@
 import {expect} from "chai";
 
 function matchesYears(carModel: CarModel, criteria: CarSearchCriteria): boolean {
-  return MathUtil.intervalsIntersect(carModel.startYear, carModel.endYear, criteria.startYear, criteria.endYear);
+  const interval1 = {
+    start: carModel.startYear,
+    end: carModel.endYear
+  };
+  const interval2 = {
+    start: criteria.startYear,
+    end: criteria.endYear
+  };
+  return MathUtil.better(interval1, interval2);
 }
 
 /** @deprecated...*/
@@ -31,15 +39,11 @@ function filterCarModels(criteria: CarSearchCriteria, models: readonly /*💖*/ 
 
 
 function applyCapacityFilter() {
-  console.log(MathUtil.intervalsIntersect(1000, 1600, 1250, 2000));
+  console.log(MathUtil.better({start: 1000, end: 1600}, {start: 1250, end: 2000}));
 }
 
 class MathUtil { // collision with others in the same namespace
   // ask chatGPT if there's any library doing this already (among your dependencies :)
-  static intervalsIntersect(start1: number, end1: number, start2: number, end2: number): boolean {
-    return start1 <= end2 && start2 <= end1;
-  }
-
   static better(interval1: Interval, interval2: Interval): boolean {
     return interval1.start <= interval2.end &&
       interval2.start <= interval1.end;
