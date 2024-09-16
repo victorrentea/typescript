@@ -34,12 +34,23 @@ function applyCapacityFilter() {
   console.log(MathUtil.intervalsIntersect(1000, 1600, 1250, 2000));
 }
 
-class MathUtil {
+class MathUtil { // collision with others in the same namespace
+  // ask chatGPT if there's any library doing this already (among your dependencies :)
   static intervalsIntersect(start1: number, end1: number, start2: number, end2: number): boolean {
     return start1 <= end2 && start2 <= end1;
   }
+
+  static better(interval1: Interval, interval2: Interval): boolean {
+    return interval1.start <= interval2.end &&
+      interval2.start <= interval1.end;
+  }
 }
 
+// type Interval = [number, number]; // OMNG NO!
+type Interval = { start: number, end: number };
+
+// in programming, there are only 2 hard things:
+// cache invalidation, naming things, and off-by-one errors. -- Phil Karlton
 
 class CarSearchCriteria {
   constructor(public readonly startYear: number,
