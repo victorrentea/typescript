@@ -4,17 +4,23 @@ function matchesYears(carModel: CarModel, criteria: CarSearchCriteria): boolean 
   return MathUtil.intervalsIntersect(carModel.startYear, carModel.endYear, criteria.startYear, criteria.endYear);
 }
 
-function filterCarModels(criteria: CarSearchCriteria, models: CarModel[]): CarModel[] {
-  for (let i = 0; i < models.length; i++) { // if you think you find a BUG while refactoring, DON'T FIX IT! (especially n old code)
-    // PO said it's a bug, but users complained about it, so we kept and cherished THE BUG!
-    // for (let i = models.length-1; i>=0;i--) { // correct
-    if (!matchesYears(models[i], criteria)) {
-      models.splice(i, 1);
-      i--; // life-savior!
-    }
-  }
+/** @deprecated...*/
+function filterCarModels(criteria: CarSearchCriteria, models: readonly /*💖*/ CarModel[]): CarModel[] {
+  // for (let i = 0; i < models.length; i++) {
+  //   if (!matchesYears(models[i], criteria)) {
+  //     models.splice(i, 1);
+  //     i--;
+  //   }
+  // }
+
+  // this was a REWRITE, not a REFACTOR.
+  // we did introduce a functional change: we are NO LONGER REMOVING from the param list.
+  // TODO now: trace the callers and see if this change is OK.
+  // hopefully you could find the answer without callign the PO.
+  // if this a shared library, ! you can't touch this!!!
+  const results = models.filter(model => matchesYears(model, criteria));
   console.log("More filtering logic");
-  return models;
+  return results;
 }
 
 // refactoring !== fix bugs
