@@ -1,15 +1,13 @@
 import {expect} from "chai";
 
-function matchesYears(carModel: CarModel, criteria: CarSearchCriteria): boolean {
-  const interval1 = {
-    start: carModel.startYear,
-    end: carModel.endYear
-  };
-  const interval2 = {
-    start: criteria.startYear,
-    end: criteria.endYear
-  };
-  return MathUtil.better(interval1, interval2);
+function isMatchesYears(criteria: CarSearchCriteria, carYearInterval: Interval): boolean {
+  // const interval2 = { // with this syntax you can't populate a class
+  //   start: criteria.startYear,
+  //   end: criteria.endYear
+  // };
+  const interval2 = new Interval(criteria.startYear, criteria.endYear);
+  return carYearInterval.intersects(interval2);
+  // return interval1.intersects(interval2);
 }
 
 /** @deprecated...*/
@@ -26,7 +24,7 @@ function filterCarModels(criteria: CarSearchCriteria, models: readonly /*💖*/ 
   // TODO now: trace the callers and see if this change is OK.
   // hopefully you could find the answer without callign the PO.
   // if this a shared library, ! you can't touch this!!!
-  const results = models.filter(model => matchesYears(model, criteria));
+  const results = models.filter(model => isMatchesYears(criteria, model.yearInterval));
   console.log("More filtering logic");
   return results;
 }
@@ -39,19 +37,55 @@ function filterCarModels(criteria: CarSearchCriteria, models: readonly /*💖*/ 
 
 
 function applyCapacityFilter() {
-  console.log(MathUtil.better({start: 1000, end: 1600}, {start: 1250, end: 2000}));
+  console.log(MathUtil.doIntervalsIntersect({start: 1000, end: 1600}, {start: 1250, end: 2000}));
 }
 
 class MathUtil { // collision with others in the same namespace
   // ask chatGPT if there's any library doing this already (among your dependencies :)
-  static better(interval1: Interval, interval2: Interval): boolean {
+  // static doIntervalsIntersect(interval1: Interval, interval2: Interval): boolean {
+  // static doIntervalsIntersect(carModel, criteria): boolean { // too coupled to MY flow
+  static doIntervalsIntersect(interval1: Interval, interval2: Interval): boolean {
     return interval1.start <= interval2.end &&
       interval2.start <= interval1.end;
   }
 }
 
 // type Interval = [number, number]; // OMNG NO!
-type Interval = { start: number, end: number };
+
+// type Interval = { start: number, end: number };
+// type Interval2 = { center: number } & Interval;
+// const i2: Interval2 = {
+//   start: 1,
+//   end: 2,
+//   center: 1.5
+// }
+// class X implements Interval {
+//   start: number = 0;
+//   end: number = 0;
+// }
+
+// move to interface:
+// interface Interval {
+//   readonly start: number,
+//   readonly end: number,
+// //   f: () => void// abstract method
+// }
+class Interval {
+  constructor(public readonly start: number,
+              public readonly end: number) {
+    if (start > end) throw new Error("start larger than end");
+  }
+
+  intersects(other: Interval): boolean {
+    return this.start <= other.end && other.start <= this.end;
+  }
+}
+
+// move class can have behavior inside (methods with body, or constructor)
+// 1) if (yearInterval.start > yearInterval.end) {
+//       throw new Error("start larger than end");
+//     }
+// 2) methods/behavior inside.
 
 // in programming, there are only 2 hard things:
 // cache invalidation, naming things, and off-by-one errors. -- Phil Karlton
@@ -64,15 +98,22 @@ class CarSearchCriteria {
   }
 }
 
-class CarModel {
+// class CarModel implements Interval {// abuse of polymorphism.
+// a car IS NOT an interval. it HAS an interval. (property)
+class CarModel { // if this is a DTO from JSON you just broke your contract!
+  // dangerous structural change.
+  // only doable on the WHOLY DOMAIN MODEL! (a set of datastructures hidden from the outside world)
   constructor(public readonly make: string,
               public readonly model: string,
-              public readonly startYear: number,
-              public readonly endYear: number) {
-    if (startYear > endYear) {
+              // public readonly startYear: number,
+              // public readonly endYear: number
+              public readonly yearInterval: Interval // = -1 attr
+  ) {
+    if (yearInterval.start > yearInterval.end) {
       throw new Error("start larger than end");
     }
   }
+
 }
 
 it('should filter car models', () => {
