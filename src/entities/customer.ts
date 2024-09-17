@@ -1,16 +1,16 @@
 import {Movie} from "./movie";
 import {MOVIE_CATEGORY} from "../VideoStore";
+import {Rental} from "./rental";
 
 export class Customer {
-    private readonly name: string;
-    private rentals: any[] = [];
+    private rentals: Rental[] = [];
 
-    constructor(name: string) {
+    constructor(private readonly name: string) {
         this.name = name;
     }
 
-    public addRental(m: Movie, d: number) {
-        this.rentals.push({d: d, m: m});
+    public addRental(rental: Rental) {
+        this.rentals.push(rental);
     }
 
     public statement(): string {
@@ -19,7 +19,7 @@ export class Customer {
 
         let result = "Rental Record for " + this.name + "\n";
         for (const r of this.rentals) {
-            let each = r.m;
+            let each = r.movie;
             let thisAmount = 0;
             let dr = r.d;
             // determine amounts for each line
