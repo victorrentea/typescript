@@ -1,4 +1,9 @@
 export class Movie {
+  constructor(title: string, priceCode: number) {
+    this.title = title;
+    this.priceCode = priceCode;
+  }
+
   public title: string;
   public priceCode: number;
 }
