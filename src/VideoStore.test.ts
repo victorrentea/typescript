@@ -1,7 +1,8 @@
 // red
 import {expect} from 'chai';
 import {describe, it} from 'mocha';
-import {Customer, MOVIE_CATEGORY} from "./VideoStore";
+import {MOVIE_CATEGORY} from "./VideoStore";
+import {Customer} from "./entities/customer";
 
 
 describe('Videostore', () => {
