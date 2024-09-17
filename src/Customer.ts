@@ -31,8 +31,11 @@ export class Customer {
     }
 
     private calculateTotalAmount(): number {
-        return this.rentals.reduce((total, rental) =>
-            total + rental.movie.calculateAmount(rental.rentalDays), 0);
+        // return this.rentals.reduce((total, rental) =>
+        //     total + rental.movie.calculateAmount(rental.rentalDays), 0);
+
+        return this.rentals.map(rental => rental.movie.calculateAmount(rental.rentalDays))
+          .reduce((total, amount) => total + amount, 0);
     }
 
     private calculateFrequentRenterPoints(): number {
