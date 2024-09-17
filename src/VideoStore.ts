@@ -41,7 +41,6 @@ export class Customer {
             frequentRenterPoints++;
             let thisAmount = this.calculateMovieRentalPrice(movie, rentalDays);
 
-            // add bonus for a two day new release rental
             if (this.checkBonusPrivileged(movie, rentalDays)) {
                 frequentRenterPoints++;
             }
