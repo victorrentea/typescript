@@ -21,3 +21,5 @@ describe('Videostore', () => {
       expect(customer.statement()).to.equal(expected);
   });
 });
+
+
