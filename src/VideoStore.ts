@@ -14,7 +14,6 @@ type Rental = {
     movie: Movie;
 };
 
-
 export class Customer {
     private name: string;
     private rentals: Rental[] = [];
@@ -28,8 +27,7 @@ export class Customer {
     }
 
     public statement(): string {
-        const moviePrices = this.rentals.map(rental => (
-            {
+        const moviePrices = this.rentals.map(rental => ({
                 moviePrice: this.calculatePrice(rental.movie, rental.days),
                 movieTitle: rental.movie.title
             }));
@@ -39,12 +37,9 @@ export class Customer {
                 moviePrice,
                 movieTitle
             }) => `${sum}\t${movieTitle}\t${moviePrice.toFixed(1)}\n`, `Rental Record for ${this.name}\n`);
-
         const frequentRenterPoints = this.rentals
             .reduce((sum, currentMovie) => sum + this.calculateBonus(currentMovie.movie.priceCode, currentMovie.days) + 1, 0);
-
         return `${result}Amount owed is ${totalAmount.toFixed(1)}\nYou earned ${frequentRenterPoints} frequent renter points`;
-
     }
 
     private calculateBonus(priceCode: PriceCode, numberOfRentedDays: number) {
@@ -65,12 +60,12 @@ export class Customer {
     }
 
     private calculateChildrenMoviePrice(numberOfRentedDays: number) {
-        const moviePrice = 1.5;
-        return numberOfRentedDays > 3 ? moviePrice + (numberOfRentedDays - 3) * 1.5 : moviePrice;
+        const MOVIE_PRICE = 1.5;
+        return numberOfRentedDays > 3 ? MOVIE_PRICE + (numberOfRentedDays - 3) * 1.5 : MOVIE_PRICE;
     }
 
     private calculateRegularMoviePrice(numberOfRentedDays: number) {
-        const moviePrice = 2;
-        return numberOfRentedDays > 2 ? moviePrice + (numberOfRentedDays - 2) * 1.5 : moviePrice;
+        const MOVIE_PRICE = 2;
+        return numberOfRentedDays > 2 ? MOVIE_PRICE + (numberOfRentedDays - 2) * 1.5 : MOVIE_PRICE;
     }
 }
