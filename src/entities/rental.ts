@@ -1,5 +1,6 @@
 import {Movie} from "./movie";
 import {MOVIE_CATEGORY} from "../VideoStore";
+import {RentSummary} from "./rent-summary";
 
 export class Rental {
     constructor(public movie: Movie, public daysRent: number) {
@@ -29,4 +30,14 @@ export class Rental {
         }
         return thisAmount;
     }
+
+    public getSummary() : RentSummary {
+        const price = this.calculatePrice();
+        return {
+            price,
+            frequentRenterPoints: this.calculateFrequentRenterPoints(),
+            textResult: `\t${this.movie.title}\t${price.toFixed(1)}`
+        };
+    }
+
 }
