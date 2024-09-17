@@ -7,9 +7,9 @@ describe('Videostore', () => {
     it('Characterization Test ', function () {
 
         const customer = new Customer("John Doe");
-        customer.addRental({movie: {title: "Star Wars", priceCode: "newRelease"}, day: 6});
-        customer.addRental({movie: {title: "Sofia", priceCode: "children"}, day: 7});
-        customer.addRental({movie: {title: "Inception", priceCode: "regular"}, day: 5});
+        customer.addRental({title: "Star Wars", priceCode: "newRelease"}, 6);
+        customer.addRental({title: "Sofia", priceCode: "children"}, 7);
+        customer.addRental({title: "Inception", priceCode: "regular"}, 5);
 
         const expected = "Rental Record for John Doe\n"
             + "	Star Wars	18.0\n"
