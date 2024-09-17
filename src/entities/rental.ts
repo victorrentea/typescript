@@ -8,7 +8,7 @@ export class Rental {
 
     calculateFrequentRenterPoints() {
         // add bonus for a two day new release rental
-        return this.movie.priceCode === MOVIE_CATEGORY.NEW_RELEASE && this.daysRent > 1 ? 2 : 1
+        return this.movie.priceCode === MOVIE_CATEGORY.NEW_RELEASE && this.daysRent >= 2 ? 2 : 1
     }
 
     public calculatePrice(): number {
@@ -29,7 +29,7 @@ export class Rental {
         return {
             price,
             frequentRenterPoints: this.calculateFrequentRenterPoints(),
-            textResult: `\t${this.movie.title}\t${price.toFixed(1)}`
+            textResult: `\t${this.movie.title}\t${price.toFixed(1)}` // statementLine?
         };
     }
 
