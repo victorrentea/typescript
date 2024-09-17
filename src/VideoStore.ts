@@ -17,19 +17,24 @@ const prices: Record<PriceCode, Price> = {
     newRelease: {base: 0, extra: 3, limit: 0}
 };
 
+interface rental {
+    movie: Movie,
+    day: number
+}
+
 export class Customer {
     private readonly name: string;
-    private rentals: any[] = [];
+    private rentals: rental[] = [];
 
     constructor(name: string) {
         this.name = name;
     }
 
-    public addRental(movie: Movie, day: number) {
-        this.rentals.push({day: day, movie: movie});
+    addRental(rental: rental) {
+        this.rentals.push(rental);
     }
 
-    public statement(): string {
+    public createStatement(): string {
         let totalAmount: number = 0;
         let frequentRenterPoints = 0;
 
@@ -39,19 +44,17 @@ export class Customer {
             const rentalDays = rental.day;
             // add frequent renter points
             frequentRenterPoints++;
-            let thisAmount = this.calculateMovieRentalPrice(movie, rentalDays);
+            let rentalPrice = this.calculateMovieRentalPrice(movie, rentalDays);
 
             if (this.checkBonusPrivileged(movie, rentalDays)) {
                 frequentRenterPoints++;
             }
             // show figures line for this rental
-            result += "\t" + movie.title + "\t" + thisAmount.toFixed(1) + "\n";
-            totalAmount += thisAmount;
+            result += "\t" + movie.title + "\t" + rentalPrice.toFixed(1) + "\n";
+            totalAmount += rentalPrice;
         }
         // add footer lines
-        result += "Amount owed is " + totalAmount.toFixed(1) + "\n";
-        result += "You earned " + frequentRenterPoints + " frequent renter points";
-        return result;
+        return result + "Amount owed is " + totalAmount.toFixed(1) + "\nYou earned " + frequentRenterPoints + " frequent renter points";
     }
 
     private checkBonusPrivileged(movie: Movie, rentalDays: number) {
@@ -59,14 +62,14 @@ export class Customer {
     }
 
     private calculateMovieRentalPrice(movie: Movie, rentalDays: number) {
-        // determine amounts for each line
+
         const price = prices[movie.priceCode];
-        let thisAmount = price.base;
+        let rentalPrice = price.base;
 
         if (rentalDays > price.limit) {
-            thisAmount += (rentalDays - price.limit) * price.extra;
+            rentalPrice += (rentalDays - price.limit) * price.extra;
         }
-        return thisAmount;
+        return rentalPrice;
     }
 }
 
