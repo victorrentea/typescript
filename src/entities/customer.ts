@@ -13,14 +13,12 @@ export class Customer {
     }
 
     public statement(): string {
-        const calculatedPerRentalArr: RentSummary[] = this.rentals.map(rental => {
-            return rental.getSummary();
-        });
-        const totalAmount = calculatedPerRentalArr.reduce((acc, curr) => acc + curr.price, 0);
-        const frequentRenterPoints = calculatedPerRentalArr.reduce((acc, curr) => acc + curr.frequentRenterPoints, 0);
-        const statementines = calculatedPerRentalArr.map(rental => rental.textResult).join('\n');
+        const rentSummaries = this.rentals.map(rental => rental.getSummary());
+        const totalAmount = rentSummaries.reduce((acc, curr) => acc + curr.price, 0);
+        const frequentRenterPoints = rentSummaries.reduce((acc, curr) => acc + curr.frequentRenterPoints, 0);
+        const statementLines = rentSummaries.map(rental => rental.textResult).join('\n');
         return `Rental Record for ${this.name}\n` +
-            statementines + '\n' +
+          statementLines + '\n' +
             `Amount owed is ${totalAmount.toFixed(1)}\n` +
             `You earned ${frequentRenterPoints} frequent renter points`;
     }
