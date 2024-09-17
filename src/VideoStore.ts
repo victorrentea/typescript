@@ -37,9 +37,9 @@ export class Customer {
 
     private produceReceiptFooter() {
         let result = "";
-        const totalPrice = this.calculateTotalRentalsPrice();
+        const price = this.calculateTotalRentalsPrice();
         const frequentRenterPoints = this.calculateTotalFrequencyRenterPoints();
-        result += "Amount owed is " + totalPrice.toFixed(1) + "\n";
+        result += "Amount owed is " + price.toFixed(1) + "\n";
         result += "You earned " + frequentRenterPoints + " frequent renter points";
 
         return result;
