@@ -1,6 +1,6 @@
 export enum PriceCode {
-    CHILDRENS ,
-    REGULAR ,
+    CHILDRENS,
+    REGULAR,
     NEW_RELEASE
 }
 
@@ -28,23 +28,26 @@ export class Customer {
     }
 
     public statement(): string {
-        let totalAmount: number = 0;
         let frequentRenterPoints = 0;
+        const moviePrices = this.rentals.map(rental => (
+            {
+                moviePrice: this.calculatePrice(rental.movie, rental.days),
+                movieTitle: rental.movie.title
+            }));
+        const totalAmount = moviePrices.reduce((sum, {moviePrice}) => sum + moviePrice, 0);
+        let result : string = moviePrices
+            .reduce((sum, {
+                moviePrice,
+                movieTitle
+            }) => `${sum}\t${movieTitle}\t${moviePrice.toFixed(1)}\n`, `Rental Record for ${this.name}\n`);
 
-        let result = `Rental Record for ${this.name}\n`;
-        // this.rentals.
         for (const rental of this.rentals) {
             const currentMovie = rental.movie;
             const numberOfRentedDays = rental.days;
-            // determine amounts for each line
-            const moviePrice = this.calculatePrice(currentMovie, numberOfRentedDays);
             // add frequent renter points
             frequentRenterPoints++;
             // add bonus for a two day new release rental
             frequentRenterPoints += this.calculateBonus(currentMovie, numberOfRentedDays);
-            // show figures line for this rental
-            result += `\t${currentMovie.title}\t${moviePrice.toFixed(1)}\n`;
-            totalAmount += moviePrice;
         }
         // add footer lines
         result += "Amount owed is " + totalAmount.toFixed(1) + "\n";
@@ -59,7 +62,7 @@ export class Customer {
         return 0;
     }
 
-    private calculatePrice(currentMovie: Movie, numberOfRentedDays: number) : number {
+    private calculatePrice(currentMovie: Movie, numberOfRentedDays: number): number {
         const priceCodeMap = {
             [PriceCode.REGULAR]: this.calculateRegularMoviePrice,
             [PriceCode.NEW_RELEASE]: this.calculateNewReleaseMoviePrice,
