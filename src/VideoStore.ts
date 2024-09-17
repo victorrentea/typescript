@@ -60,22 +60,25 @@ export class Customer {
     }
 
     private calculatePrice(currentMovie: Movie, numberOfRentedDays: number) : number {
-        let moviePrice = 0;
-        switch (currentMovie.priceCode) {
-            case PriceCode.REGULAR:
-                moviePrice += 2;
-                if (numberOfRentedDays > 2)
-                    moviePrice += (numberOfRentedDays - 2) * 1.5;
-                break;
-            case PriceCode.NEW_RELEASE:
-                moviePrice += numberOfRentedDays * 3;
-                break;
-            case PriceCode.CHILDRENS:
-                moviePrice += 1.5;
-                if (numberOfRentedDays > 3)
-                    moviePrice += (numberOfRentedDays - 3) * 1.5;
-                break;
+        const priceCodeMap = {
+            [PriceCode.REGULAR]: this.calculateRegularMoviePrice,
+            [PriceCode.NEW_RELEASE]: this.calculateNewReleaseMoviePrice,
+            [PriceCode.CHILDRENS]: this.calculateChildrenMoviePrice
         }
-        return moviePrice;
+        return priceCodeMap[currentMovie.priceCode](numberOfRentedDays);
+    }
+
+    private calculateNewReleaseMoviePrice(numberOfRentedDays: number) {
+        return numberOfRentedDays * 3;
+    }
+
+    private calculateChildrenMoviePrice(numberOfRentedDays: number) {
+        const moviePrice = 1.5;
+        return numberOfRentedDays > 3 ? moviePrice + (numberOfRentedDays - 3) * 1.5 : moviePrice;
+    }
+
+    private calculateRegularMoviePrice(numberOfRentedDays: number) {
+        const moviePrice = 2;
+        return numberOfRentedDays > 2 ? moviePrice + (numberOfRentedDays - 2) * 1.5 : moviePrice;
     }
 }
