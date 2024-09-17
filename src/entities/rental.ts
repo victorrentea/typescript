@@ -12,23 +12,16 @@ export class Rental {
     }
 
     public calculatePrice(): number {
-        let thisAmount = 0;
         switch (this.movie.priceCode) {
             case MOVIE_CATEGORY.REGULAR:
-                thisAmount += 2;
-                if (this.daysRent > 2)
-                    thisAmount += (this.daysRent - 2) * 1.5;
-                break;
+                return (this.daysRent > 2) ? 2 + (this.daysRent - 2) * 1.5 : 2;
             case MOVIE_CATEGORY.NEW_RELEASE:
-                thisAmount += this.daysRent * 3;
-                break;
+                return  this.daysRent * 3;
             case MOVIE_CATEGORY.CHILDREN:
-                thisAmount += 1.5;
-                if (this.daysRent > 3)
-                    thisAmount += (this.daysRent - 3) * 1.5;
-                break;
+                return (this.daysRent > 3) ? 1.5 + (this.daysRent - 3) * 1.5 : 1.5;
+            default:
+                throw new Error("Unknown price code");
         }
-        return thisAmount;
     }
 
     public getSummary() : RentSummary {
