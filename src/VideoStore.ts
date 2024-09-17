@@ -14,7 +14,7 @@ interface Price {
 const prices: Record<PriceCode, Price> = {
     children: {base: 1.5, extra: 1.5, limit: 3},
     regular: {base: 2, extra: 1.5, limit: 2},
-    newRelease: {base: 3, extra: 0, limit: 0}
+    newRelease: {base: 0, extra: 3, limit: 0}
 };
 
 export class Customer {
@@ -37,13 +37,12 @@ export class Customer {
         for (const rental of this.rentals) {
             const movie = rental.movie;
             const rentalDays = rental.day;
-            let thisAmount = 0;
             // add frequent renter points
             frequentRenterPoints++;
-            thisAmount = this.calculateMovieRentalPrice(movie, thisAmount, rentalDays);
+            let thisAmount = this.calculateMovieRentalPrice(movie, rentalDays);
 
             // add bonus for a two day new release rental
-            if (movie.priceCode === "newRelease" && rentalDays > 1) {
+            if (this.checkBonusPrivileged(movie, rentalDays)) {
                 frequentRenterPoints++;
             }
             // show figures line for this rental
@@ -56,10 +55,14 @@ export class Customer {
         return result;
     }
 
-    private calculateMovieRentalPrice(movie: Movie, thisAmount: number, rentalDays: number) {
+    private checkBonusPrivileged(movie: Movie, rentalDays: number) {
+        return movie.priceCode === "newRelease" && rentalDays > 1;
+    }
+
+    private calculateMovieRentalPrice(movie: Movie, rentalDays: number) {
         // determine amounts for each line
         const price = prices[movie.priceCode];
-        thisAmount += price.base * rentalDays;
+        let thisAmount = price.base;
 
         if (rentalDays > price.limit) {
             thisAmount += (rentalDays - price.limit) * price.extra;
