@@ -17,28 +17,28 @@ export class Customer {
         let totalAmount: number = 0;
         let frequentRenterPoints = 0;
 
-        let result = "Rental Record for " + this.name + "\n";
+        let result = `Rental Record for ${this.name}\n`;
         for (const rental of this.rentals) {
-            let thisAmount = 0;
             // determine amounts for each line
-            thisAmount = this.calculateRentPrice(rental.movie, thisAmount, rental);
+            const thisAmount = this.calculateRentPrice(rental.movie, rental);
             // add frequent renter points
-            frequentRenterPoints++;
             // add bonus for a two day new release rental
-            if (rental.movie.priceCode == MOVIE_CATEGORY.NEW_RELEASE
-                && rental.daysRent > 1)
-                frequentRenterPoints++;
+            frequentRenterPoints += rental.calculateFrequentRenterPoints();
             // show figures line for this rental
-            result += "\t" + rental.movie.title + "\t" + thisAmount.toFixed(1) + "\n";
+            result += `\t${rental.movie.title}\t${thisAmount.toFixed(1)}\n`;
             totalAmount += thisAmount;
         }
         // add footer lines
-        result += "Amount owed is " + totalAmount.toFixed(1) + "\n";
-        result += "You earned " + frequentRenterPoints + " frequent renter points";
+        // todo add text to array, use with replace
+        result += `Amount owed is ${totalAmount.toFixed(1)}\n`;
+        result += `You earned ${frequentRenterPoints} frequent renter points`;
         return result;
     }
 
-    private calculateRentPrice(movie: Movie, thisAmount: number, rental: Rental) {
+
+
+    private calculateRentPrice(movie: Movie, rental: Rental): number {
+        let thisAmount = 0;
         switch (movie.priceCode) {
             case MOVIE_CATEGORY.REGULAR:
                 thisAmount += 2;
