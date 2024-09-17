@@ -17,43 +17,23 @@ export class Customer {
         let totalAmount: number = 0;
         let frequentRenterPoints = 0;
 
-        let result = `Rental Record for ${this.name}\n`;
+        const resultStringArray = [`Rental Record for ${this.name}`];
         for (const rental of this.rentals) {
             // determine amounts for each line
-            const thisAmount = this.calculateRentPrice(rental.movie, rental);
+            const thisAmount = rental.calculateRentPrice(rental);
             // add frequent renter points
-            // add bonus for a two day new release rental
             frequentRenterPoints += rental.calculateFrequentRenterPoints();
             // show figures line for this rental
-            result += `\t${rental.movie.title}\t${thisAmount.toFixed(1)}\n`;
+            resultStringArray.push(`\t${rental.movie.title}\t${thisAmount.toFixed(1)}`);
             totalAmount += thisAmount;
         }
         // add footer lines
         // todo add text to array, use with replace
-        result += `Amount owed is ${totalAmount.toFixed(1)}\n`;
-        result += `You earned ${frequentRenterPoints} frequent renter points`;
-        return result;
+        resultStringArray.push(`Amount owed is ${totalAmount.toFixed(1)}`);
+        resultStringArray.push(`You earned ${frequentRenterPoints} frequent renter points`);
+        return resultStringArray.join('\n');
     }
 
 
 
-    private calculateRentPrice(movie: Movie, rental: Rental): number {
-        let thisAmount = 0;
-        switch (movie.priceCode) {
-            case MOVIE_CATEGORY.REGULAR:
-                thisAmount += 2;
-                if (rental.daysRent > 2)
-                    thisAmount += (rental.daysRent - 2) * 1.5;
-                break;
-            case MOVIE_CATEGORY.NEW_RELEASE:
-                thisAmount += rental.daysRent * 3;
-                break;
-            case MOVIE_CATEGORY.CHILDREN:
-                thisAmount += 1.5;
-                if (rental.daysRent > 3)
-                    thisAmount += (rental.daysRent - 3) * 1.5;
-                break;
-        }
-        return thisAmount;
-    }
 }
