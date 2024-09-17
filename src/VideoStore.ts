@@ -28,38 +28,27 @@ export class Customer {
     }
 
     public statement(): string {
-        let frequentRenterPoints = 0;
         const moviePrices = this.rentals.map(rental => (
             {
                 moviePrice: this.calculatePrice(rental.movie, rental.days),
                 movieTitle: rental.movie.title
             }));
         const totalAmount = moviePrices.reduce((sum, {moviePrice}) => sum + moviePrice, 0);
-        let result : string = moviePrices
+        let result: string = moviePrices
             .reduce((sum, {
                 moviePrice,
                 movieTitle
             }) => `${sum}\t${movieTitle}\t${moviePrice.toFixed(1)}\n`, `Rental Record for ${this.name}\n`);
 
-        for (const rental of this.rentals) {
-            const currentMovie = rental.movie;
-            const numberOfRentedDays = rental.days;
-            // add frequent renter points
-            frequentRenterPoints++;
-            // add bonus for a two day new release rental
-            frequentRenterPoints += this.calculateBonus(currentMovie, numberOfRentedDays);
-        }
-        // add footer lines
-        result += "Amount owed is " + totalAmount.toFixed(1) + "\n";
-        result += "You earned " + frequentRenterPoints + " frequent renter points";
-        return result;
+        const frequentRenterPoints = this.rentals
+            .reduce((sum, currentMovie) => sum + this.calculateBonus(currentMovie.movie.priceCode, currentMovie.days) + 1, 0);
+
+        return `${result}Amount owed is ${totalAmount.toFixed(1)}\nYou earned ${frequentRenterPoints} frequent renter points`;
+
     }
 
-    private calculateBonus(currentMovie: Movie, numberOfRentedDays: number) {
-        if (currentMovie.priceCode == PriceCode.NEW_RELEASE && numberOfRentedDays > 1) {
-            return 1;
-        }
-        return 0;
+    private calculateBonus(priceCode: PriceCode, numberOfRentedDays: number) {
+        return priceCode == PriceCode.NEW_RELEASE && numberOfRentedDays > 1 ? 1 : 0;
     }
 
     private calculatePrice(currentMovie: Movie, numberOfRentedDays: number): number {
