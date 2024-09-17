@@ -10,21 +10,21 @@ export class Rental {
         return this.movie.priceCode === MOVIE_CATEGORY.NEW_RELEASE && this.daysRent > 1 ? 2 : 1
     }
 
-    public calculateRentPrice(rental: Rental): number {
+    public calculatePrice(): number {
         let thisAmount = 0;
-        switch (rental.movie.priceCode) {
+        switch (this.movie.priceCode) {
             case MOVIE_CATEGORY.REGULAR:
                 thisAmount += 2;
-                if (rental.daysRent > 2)
-                    thisAmount += (rental.daysRent - 2) * 1.5;
+                if (this.daysRent > 2)
+                    thisAmount += (this.daysRent - 2) * 1.5;
                 break;
             case MOVIE_CATEGORY.NEW_RELEASE:
-                thisAmount += rental.daysRent * 3;
+                thisAmount += this.daysRent * 3;
                 break;
             case MOVIE_CATEGORY.CHILDREN:
                 thisAmount += 1.5;
-                if (rental.daysRent > 3)
-                    thisAmount += (rental.daysRent - 3) * 1.5;
+                if (this.daysRent > 3)
+                    thisAmount += (this.daysRent - 3) * 1.5;
                 break;
         }
         return thisAmount;
