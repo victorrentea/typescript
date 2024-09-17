@@ -14,6 +14,24 @@ export const MOVIE_CATEGORY = {
   NEW_RELEASE: 1
 };
 
+const prices = {
+    [MOVIE_CATEGORY.REGULAR]: {
+        base: 2,
+        extra: 1.5,
+        limit: 2
+    },
+    [MOVIE_CATEGORY.NEW_RELEASE]: {
+        base: 3,
+        extra: 0,
+        limit: 0
+    },
+    [MOVIE_CATEGORY.CHILDRENS]: {
+        base: 1.5,
+        extra: 1.5,
+        limit: 3
+    }
+}
+
 
 export class Customer {
   private name: string;
@@ -23,8 +41,8 @@ export class Customer {
     this.name = name;
   }
 
-  public addRental(m: Movie, d: number) {
-    this.rentals.push({d: d, m: m});
+  public addRental(movie: Movie, day: number) {
+    this.rentals.push({day: day, movie: movie});
   }
 
   public statement(): string {
@@ -33,32 +51,21 @@ export class Customer {
 
     let result = "Rental Record for " + this.name + "\n";
     for (const rental of this.rentals) {
-      let movie = rental.m;
+      const movie = rental.movie;
       let thisAmount = 0;
-      let rentalDays = rental.d;
+      const rentalDays = rental.day;
       // determine amounts for each line
-      switch (movie.priceCode) {
-        case MOVIE_CATEGORY.REGULAR:
-          thisAmount += 2;
-          if (rentalDays > 2)
-            thisAmount += (rentalDays - 2) * 1.5;
-          break;
-        case MOVIE_CATEGORY.NEW_RELEASE:
-          thisAmount += rentalDays * 3;
-          break;
-        case MOVIE_CATEGORY.CHILDRENS:
-          thisAmount += 1.5;
-          if (rentalDays > 3)
-            thisAmount += (rentalDays - 3) * 1.5;
-          break;
+      const price = prices[movie.priceCode];
+      thisAmount += price.base * rentalDays;
+      if (rentalDays > price.limit) {
+          thisAmount += (rentalDays - price.limit) * price.extra;
       }
       // add frequent renter points
       frequentRenterPoints++;
       // add bonus for a two day new release rental
-      if (movie.priceCode != null &&
-          (movie.priceCode == MOVIE_CATEGORY.NEW_RELEASE)
-          && rentalDays > 1)
+      if (movie.priceCode === MOVIE_CATEGORY.NEW_RELEASE && rentalDays > 1) {
         frequentRenterPoints++;
+      }
       // show figures line for this rental
       result += "\t" + movie.title + "\t" + thisAmount.toFixed(1) + "\n";
       totalAmount += thisAmount;
