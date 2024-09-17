@@ -1,41 +1,24 @@
 export class Movie {
-    public title: string;
-    public priceCode: number;
-
-    constructor(title: string, priceCode: number) {
-        this.title = title;
-        this.priceCode = priceCode;
+    constructor(public title: string, public priceCode: PriceCode) {
     }
 }
 
+type PriceCode = "children" | "regular" | "newRelease";
 
-export const  movieCategory = {
-    children : 2,
-    regular : 0,
-    newRelease :1
- }
-
-const prices = {
-    [movieCategory.regular]: {
-        base: 2,
-        extra: 1.5,
-        limit: 2
-    },
-    [movieCategory.newRelease]: {
-        base: 3,
-        extra: 0,
-        limit: 0
-    },
-    [movieCategory.children]: {
-        base: 1.5,
-        extra: 1.5,
-        limit: 3
-    }
+interface Price {
+    base: number;
+    extra: number;
+    limit: number;
 }
 
+const prices: Record<PriceCode, Price> = {
+    children: {base: 1.5, extra: 1.5, limit: 3},
+    regular: {base: 2, extra: 1.5, limit: 2},
+    newRelease: {base: 3, extra: 0, limit: 0}
+};
 
 export class Customer {
-    private name: string;
+    private readonly name: string;
     private rentals: any[] = [];
 
     constructor(name: string) {
@@ -60,7 +43,7 @@ export class Customer {
             thisAmount = this.calculateMovieRentalPrice(movie, thisAmount, rentalDays);
 
             // add bonus for a two day new release rental
-            if (movie.priceCode === movieCategory.newRelease && rentalDays > 1) {
+            if (movie.priceCode === "newRelease" && rentalDays > 1) {
                 frequentRenterPoints++;
             }
             // show figures line for this rental
