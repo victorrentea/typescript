@@ -1,6 +1,8 @@
+import {MovieCategory} from "./MovieCategory";
+
 export class Movie {
-    constructor(public readonly title: string, public readonly priceCode: number) {
+    constructor(public readonly title: string, public readonly category: MovieCategory) {
         this.title = title;
-        this.priceCode = priceCode;
+        this.category = category;
     }
 }

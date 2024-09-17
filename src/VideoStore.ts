@@ -1,5 +1,4 @@
 import {Movie} from "./Movie";
-import {MovieCategory} from "./MovieCategory";
 import {Rental} from "./Rental";
 
 export class Customer {
@@ -15,44 +14,25 @@ export class Customer {
     }
 
     public statement(): string {
-        let totalAmount: number = 0;
-        let frequentRenterPoints = 0;
-
         let result = "Rental Record for " + this.name + "\n";
+
+        let frequentRenterPoints = 0;
         for (const rental of this.rentals) {
-            let each = rental.movie;
-            let thisAmount = 0;
-            let dr = rental.days;
-            // determine amounts for each line
-            switch (each.priceCode) {
-                case MovieCategory.REGULAR:
-                    thisAmount += 2;
-                    if (dr > 2)
-                        thisAmount += (dr - 2) * 1.5;
-                    break;
-                case MovieCategory.NEW_RELEASE:
-                    thisAmount += dr * 3;
-                    break;
-                case MovieCategory.CHILDRENS:
-                    thisAmount += 1.5;
-                    if (dr > 3)
-                        thisAmount += (dr - 3) * 1.5;
-                    break;
-            }
-            // add frequent renter points
-            frequentRenterPoints++;
-            // add bonus for a two day new release rental
-            if (each.priceCode != null &&
-                (each.priceCode == MovieCategory.NEW_RELEASE)
-                && dr > 1)
-                frequentRenterPoints++;
-            // show figures line for this rental
-            result += "\t" + each.title + "\t" + thisAmount.toFixed(1) + "\n";
-            totalAmount += thisAmount;
+            frequentRenterPoints += rental.getFrequentRenterPoints();
         }
-        // add footer lines
-        result += "Amount owed is " + totalAmount.toFixed(1) + "\n";
-        result += "You earned " + frequentRenterPoints + " frequent renter points";
-        return result;
+
+        let totalPrice: number = 0;
+        for (const rental of this.rentals) {
+            let price = rental.calculatePrice();
+            result += "\t" + rental.movie.title + "\t" + price.toFixed(1) + "\n";
+            totalPrice += price;
+        }
+
+        return result + this.buildMessage(totalPrice, frequentRenterPoints);
+    }
+
+
+    private buildMessage(totalPrice: number, frequentRenterPoints: number) {
+        return `Amount owed is ${totalPrice.toFixed(1)}\nYou earned ${frequentRenterPoints} frequent renter points`;
     }
 }
