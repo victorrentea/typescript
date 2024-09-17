@@ -1,15 +1,15 @@
 import {expect} from 'chai';
 import {describe, it} from 'mocha';
-import {Customer, MOVIE_CATEGORY} from "./VideoStore";
+import {Customer, MovieCategory} from "./VideoStore";
 
 
 describe('Videostore', () => {
     it('Characterization Test ', function () {
 
     const customer = new Customer("John Doe");
-    customer.addRental({title:"Star Wars", priceCode: MOVIE_CATEGORY.NEW_RELEASE}, 6);
-    customer.addRental({title:"Sofia", priceCode: MOVIE_CATEGORY.CHILDRENS}, 7);
-    customer.addRental({title:"Inception", priceCode: MOVIE_CATEGORY.REGULAR}, 5);
+    customer.addRental({title:"Star Wars", priceCode: MovieCategory.NEW_RELEASE}, 6);
+    customer.addRental({title:"Sofia", priceCode: MovieCategory.CHILDREN}, 7);
+    customer.addRental({title:"Inception", priceCode: MovieCategory.REGULAR}, 5);
 
     const expected = "Rental Record for John Doe\n"
       + "	Star Wars	18.0\n"
@@ -18,7 +18,7 @@ describe('Videostore', () => {
       + "Amount owed is 32.0\n"
       + "You earned 4 frequent renter points";
 
-      expect(customer.statement()).to.equal(expected);
+      expect(customer.generateReceipt()).to.equal(expected);
   });
 });
 

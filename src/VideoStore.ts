@@ -1,67 +1,97 @@
 export class Movie {
-  public title: string;
-  public priceCode: number;
+  constructor(public title: string,
+              public priceCode: MovieCategory) {
+  }
 }
 
-export const MOVIE_CATEGORY = {
-  CHILDRENS: 2,
-  REGULAR: 0,
-  NEW_RELEASE: 1
-};
+export enum MovieCategory {
+  REGULAR = 0,
+  NEW_RELEASE = 1,
+  CHILDREN = 2
+}
 
+export type Rental = {
+    movie: Movie,
+    days: number
+}
 
 export class Customer {
   private name: string;
-  private rentals: any[] = [];
+  private rentals: Rental[] = [];
 
   constructor(name: string) {
     this.name = name;
   }
 
-  public addRental(m: Movie, d: number) {
-    this.rentals.push({d: d, m: m});
+  public addRental(movie: Movie, days: number) {
+    this.rentals.push({days: days, movie: movie});
   }
 
-  public statement(): string {
-    let totalAmount: number = 0;
-    let frequentRenterPoints = 0;
+  public generateReceipt(): string {
+    return this.producerReceiptHeader() + this.produceReceiptBody() + this.produceReceiptFooter();
+  }
 
-    let result = "Rental Record for " + this.name + "\n";
-    for (const r of this.rentals) {
-      let each = r.m;
-      let thisAmount = 0;
-      let dr = r.d;
-      // determine amounts for each line
-      switch (each.priceCode) {
-        case MOVIE_CATEGORY.REGULAR:
-          thisAmount += 2;
-          if (dr > 2)
-            thisAmount += (dr - 2) * 1.5;
-          break;
-        case MOVIE_CATEGORY.NEW_RELEASE:
-          thisAmount += dr * 3;
-          break;
-        case MOVIE_CATEGORY.CHILDRENS:
-          thisAmount += 1.5;
-          if (dr > 3)
-            thisAmount += (dr - 3) * 1.5;
-          break;
-      }
-      // add frequent renter points
-      frequentRenterPoints++;
-      // add bonus for a two day new release rental
-      if (each.priceCode != null &&
-          (each.priceCode == MOVIE_CATEGORY.NEW_RELEASE)
-          && dr > 1)
-        frequentRenterPoints++;
-      // show figures line for this rental
-
-      result += "\t" + each.title + "\t" + thisAmount.toFixed(1) + "\n";
-      totalAmount += thisAmount;
+    private producerReceiptHeader() {
+        return "Rental Record for " + this.name + "\n";
     }
-    // add footer lines
-    result += "Amount owed is " + totalAmount.toFixed(1) + "\n";
-    result += "You earned " + frequentRenterPoints + " frequent renter points";
-    return result;
+
+    private produceReceiptFooter() {
+        let result = "";
+        const totalPrice = this.calculateTotalRentalsPrice();
+        const frequentRenterPoints = this.calculateTotalFrequencyRenterPoints();
+        result += "Amount owed is " + totalPrice.toFixed(1) + "\n";
+        result += "You earned " + frequentRenterPoints + " frequent renter points";
+
+        return result;
+    }
+
+    private produceReceiptBody(): string {
+      let result = "";
+
+      for (const rental of this.rentals) {
+          const currentRentalPrice = this.calculateRentalPrice(rental);
+          result += "\t" + rental.movie.title + "\t" + currentRentalPrice.toFixed(1) + "\n";
+      }
+
+      return result;
   }
+
+  private calculateTotalRentalsPrice(): number {
+    return this.rentals.reduce((totalPrice, rental) => totalPrice + this.calculateRentalPrice(rental), 0);
+  }
+
+  private calculateTotalFrequencyRenterPoints(): number {
+      return this.rentals.reduce((points, rental) => points + this.calculateRentalFrequencyRenterPoints(rental), 0);
+    }
+
+  private calculateRentalFrequencyRenterPoints(rental: Rental): number {
+    return this.isBonusEligible(rental) ? 2 : 1;
+  }
+
+  private isBonusEligible(rental: Rental): boolean {
+    return rental?.movie?.priceCode === MovieCategory.NEW_RELEASE
+        && rental.days > 1;
+  }
+
+  private calculateRentalPrice(rental: Rental): number {
+    return this.movieCategoryToRentalPriceMap.get(rental.movie.priceCode)?.(rental.days) ?? 0;
+  }
+
+  private movieCategoryToRentalPriceMap: Map<MovieCategory, (days:number) => number> =
+      new Map<MovieCategory, (days: number) => number>([
+    [MovieCategory.REGULAR, (days: number) => {
+      let price = 2;
+      if (days > 2)
+        price += (days - 2) * 1.5;
+      return price;
+    }],
+    [MovieCategory.NEW_RELEASE, (days: number) => days * 3],
+    [MovieCategory.CHILDREN, (days: number) => {
+      let price = 1.5;
+      if (days > 3)
+        price += (days - 3) * 1.5;
+      return price;
+    }]
+  ]);
+
 }
