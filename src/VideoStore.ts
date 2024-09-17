@@ -1,17 +1,17 @@
 export class Movie {
-  public title: string;
-  public priceCode: number;
+  public title: string | undefined;
+  public priceCode: number | undefined;
 }
 
 export const MOVIE_CATEGORY = {
-  CHILDRENS: 2,
+  CHILDREN: 2,
   REGULAR: 0,
   NEW_RELEASE: 1
 };
 
 
 export class Customer {
-  private name: string;
+  private readonly name: string;
   private rentals: any[] = [];
 
   constructor(name: string) {
@@ -41,7 +41,7 @@ export class Customer {
         case MOVIE_CATEGORY.NEW_RELEASE:
           thisAmount += dr * 3;
           break;
-        case MOVIE_CATEGORY.CHILDRENS:
+        case MOVIE_CATEGORY.CHILDREN:
           thisAmount += 1.5;
           if (dr > 3)
             thisAmount += (dr - 3) * 1.5;
