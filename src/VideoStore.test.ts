@@ -19,5 +19,6 @@ describe('Videostore', () => {
       + "You earned 4 frequent renter points";
 
       expect(customer.statement()).to.equal(expected);
+        expect(customer.statement()).to.equal(expected);
   });
 });

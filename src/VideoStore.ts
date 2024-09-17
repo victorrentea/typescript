@@ -21,12 +21,10 @@ export const MOVIE_CATEGORY = {
 
 const priceCalculator = {
     [MOVIE_CATEGORY.REGULAR]: (rentalDays: number) => {
-        // let finalRentalPrice = 2;
-        // if (rentalDays > 2)
-        //     finalRentalPrice += (rentalDays - 2) * 1.5;
-        // return finalRentalPrice;
-
-        return (rentalDays > 2) ? 2 + (rentalDays - 2) * 1.5 : 2;
+        let finalRentalPrice = 2;
+        if (rentalDays > 2)
+            finalRentalPrice += (rentalDays - 2) * 1.5;
+        return finalRentalPrice;
     },
     [MOVIE_CATEGORY.NEW_RELEASE]: (rentalDays: number) => {
         return rentalDays * 3
@@ -36,8 +34,6 @@ const priceCalculator = {
         if (rentalDays > 3)
             finalRentalPrice += (rentalDays - 3) * 1.5;
         return finalRentalPrice;
-
-        // return (rentalDays > 3) ? 1.5 + (rentalDays - 3) * 1.5 : 1.5;
     }
 }
 
@@ -54,34 +50,52 @@ export class Customer {
     public addRental(rentalMovie: Rental) {
         this.rentals.push(rentalMovie);
     }
-    public buildRentalReport(totalAmount: number, frequentRenterPoints: number): string {
+
+    private buildRentalReport(frequentRenterPoints: number): string {
+        // let totalAmount = 0;
+        // for (const rental of this.rentalReport) {
+        //     totalAmount += rental.rentalPrice;
+        // }
+        let totalAmount = this.rentalReport
+            .map(rental => rental.rentalPrice)
+            .reduce((a, b) => a + b, 0);
+
         let result = "Rental Record for " + this.name + "\n";
-        this.rentalReport.forEach((rental) => {
-            result += "\t" + rental.movieTitle + "\t" + rental.rentalPrice.toFixed(1) + "\n";
-        });
+        // for (const rental of this.rentalReport) {
+        //     result += "\t" + rental.movieTitle + "\t" + rental.rentalPrice.toFixed(1) + "\n";
+        // }
+        result += this.rentalReport.map(this.buildLine).join("");
         result += "Amount owed is " + totalAmount.toFixed(1) + "\n";
         result += "You earned " + frequentRenterPoints + " frequent renter points";
         return result;
     }
 
-    public statement(): string {
-        let totalAmount: number = 0;
-        let frequentRenterPoints = 0;
-
-        for (const rental of this.rentals) {
-            let currentMovie = rental.movie;
-            const currentRentalPrice = priceCalculator[currentMovie.priceCode](rental.rentalDays);
-            frequentRenterPoints += this.calculateRenterPointsToAdd(currentMovie, rental.rentalDays);
-            this.rentalReport.push({movieTitle: currentMovie.title, rentalPrice: currentRentalPrice});
-            totalAmount += currentRentalPrice;
-        }
-
-        return this.buildRentalReport(totalAmount, frequentRenterPoints);
+    private buildLine(rental: RentalReport) {
+        return "\t" + rental.movieTitle + "\t" + rental.rentalPrice.toFixed(1) + "\n";
     }
 
-    private calculateRenterPointsToAdd(currentMovie: Movie, rentalDays: number) {
+    public statement(): string {
+
+
+        for (const rental of this.rentals) {
+            const currentRentalPrice = priceCalculator[rental.movie.priceCode](rental.rentalDays);
+            this.rentalReport.push({movieTitle: rental.movie.title, rentalPrice: currentRentalPrice});
+        }
+
+        // let frequentRenterPoints = 0;
+        // for (const rental of this.rentals) {
+        //     frequentRenterPoints += this.calculateRenterPointsToAdd(rental.movie, rental.rentalDays);
+        // }
+        let frequentRenterPoints = this.rentals
+            .map(rental => this.calculateRenterPointsToAdd(rental))
+            .reduce((a, b) => a + b, 0);
+
+        return this.buildRentalReport(frequentRenterPoints);
+    }
+
+    private calculateRenterPointsToAdd(rental: Rental) {
         let frequentRenterPoints = 1;
-        const needToAddBonus = (currentMovie.priceCode == MOVIE_CATEGORY.NEW_RELEASE) && rentalDays > 1;
+        const needToAddBonus = (rental.movie.priceCode == MOVIE_CATEGORY.NEW_RELEASE) && rental.rentalDays > 1;
         return needToAddBonus ? frequentRenterPoints+1 : frequentRenterPoints;
         // return needToAddBonus ? 2 : 1;
     }
