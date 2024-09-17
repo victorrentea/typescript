@@ -1,6 +1,11 @@
 export class Movie {
   public title: string;
   public priceCode: number;
+
+  constructor(title: string, priceCode: number) {
+    this.title = title;
+    this.priceCode = priceCode;
+  }
 }
 
 export const MOVIE_CATEGORY = {
@@ -27,35 +32,35 @@ export class Customer {
     let frequentRenterPoints = 0;
 
     let result = "Rental Record for " + this.name + "\n";
-    for (const r of this.rentals) {
-      let each = r.m;
+    for (const rental of this.rentals) {
+      let movie = rental.m;
       let thisAmount = 0;
-      let dr = r.d;
+      let rentalDays = rental.d;
       // determine amounts for each line
-      switch (each.priceCode) {
+      switch (movie.priceCode) {
         case MOVIE_CATEGORY.REGULAR:
           thisAmount += 2;
-          if (dr > 2)
-            thisAmount += (dr - 2) * 1.5;
+          if (rentalDays > 2)
+            thisAmount += (rentalDays - 2) * 1.5;
           break;
         case MOVIE_CATEGORY.NEW_RELEASE:
-          thisAmount += dr * 3;
+          thisAmount += rentalDays * 3;
           break;
         case MOVIE_CATEGORY.CHILDRENS:
           thisAmount += 1.5;
-          if (dr > 3)
-            thisAmount += (dr - 3) * 1.5;
+          if (rentalDays > 3)
+            thisAmount += (rentalDays - 3) * 1.5;
           break;
       }
       // add frequent renter points
       frequentRenterPoints++;
       // add bonus for a two day new release rental
-      if (each.priceCode != null &&
-          (each.priceCode == MOVIE_CATEGORY.NEW_RELEASE)
-          && dr > 1)
+      if (movie.priceCode != null &&
+          (movie.priceCode == MOVIE_CATEGORY.NEW_RELEASE)
+          && rentalDays > 1)
         frequentRenterPoints++;
       // show figures line for this rental
-      result += "\t" + each.title + "\t" + thisAmount.toFixed(1) + "\n";
+      result += "\t" + movie.title + "\t" + thisAmount.toFixed(1) + "\n";
       totalAmount += thisAmount;
     }
     // add footer lines
