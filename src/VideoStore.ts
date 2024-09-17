@@ -55,6 +55,7 @@ export class Customer {
           && dr > 1)
         frequentRenterPoints++;
       // show figures line for this rental
+
       result += "\t" + each.title + "\t" + thisAmount.toFixed(1) + "\n";
       totalAmount += thisAmount;
     }
