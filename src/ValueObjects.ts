@@ -10,8 +10,15 @@ function isMatchesYears(criteria: CarSearchCriteria, carYearInterval: Interval):
   // return interval1.intersects(interval2);
 }
 
+// global {
+//   Array.prototype.intersects = function (other: Array<number>): boolean {
+//     return this[0] <= other[1] && other[0] <= this[1];
+//   }
+// }
+
 /** @deprecated...*/
 function filterCarModels(criteria: CarSearchCriteria, models: readonly /*💖*/ CarModel[]): CarModel[] {
+  models.intersects([1, 2]);
   // for (let i = 0; i < models.length; i++) {
   //   if (!matchesYears(models[i], criteria)) {
   //     models.splice(i, 1);
@@ -24,7 +31,8 @@ function filterCarModels(criteria: CarSearchCriteria, models: readonly /*💖*/ 
   // TODO now: trace the callers and see if this change is OK.
   // hopefully you could find the answer without callign the PO.
   // if this a shared library, ! you can't touch this!!!
-  const results = models.filter(model => isMatchesYears(criteria, model.yearInterval));
+  // const results = models.filter(model => isMatchesYears(criteria, model.yearInterval));
+  const results = models.filter(model => model.matchesCriteria(criteria));
   console.log("More filtering logic");
   return results;
 }
@@ -112,6 +120,10 @@ class CarModel { // if this is a DTO from JSON you just broke your contract!
     if (yearInterval.start > yearInterval.end) {
       throw new Error("start larger than end");
     }
+  }
+
+  matchesCriteria(criteria: CarSearchCriteria): boolean {
+    return isMatchesYears(criteria, this.yearInterval) && this.make === criteria.make;
   }
 
 }
