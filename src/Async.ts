@@ -1,57 +1,60 @@
-import { get } from 'request';
+// TODO optimize the following flow
+export async function suggestAttractions(cityId: string, apis: Apis): Promise<Array<Attraction>> {
+  const attractions = await apis.fetchAttractions(cityId);
 
-function downloadPage(url: string, saveTo: string, callback: (error: Error|null, content?: string) => void) {
-    get(url, (error, response) => {
-        if (error) {
-            callback(error);
-        } else {
-            writeFile(saveTo, response.body, (error) => {
-                if (error) {
-                    callback(error);
-                } else {
-                    callback(null, response.body);
-                }
-            });
-        }
-    });
-}
-
-export function writeFile(path: string , data: string , callback: (error:Error) => void): void {
-
-}
-// TODO Promise<string>
-
-
-downloadPage('https://en.wikipedia.org/wiki/Robert_Cecil_Martin', 'article.html', (error, content) => {
-    if (error) {
-        console.error(error);
-    } else {
-        console.log(content);
+  const results = new Array<Attraction>();
+  for (const attraction of attractions) {
+    const details = await apis.fetchAttractionDetails(attraction.id);
+    if (matchesWeather(await apis.fetchWeather(cityId), details)) {
+      results.push({
+        id: details.id,
+        name: details.name,
+        rating: details.ratingStars,
+        location: details.location
+      });
     }
-});
-
-// Also thrown errors:
-// function calculateTotal(items: Item[]): number {
-//   throw new Error('Not implemented.');
-// }
-
-
-/////////// also errors: -----------
-interface User {
-    email:string
+  }
+  results.sort(function (a, b) {
+    return b.rating - a.rating;
+  });
+  return results;
 }
-async function getUser():Promise<User> {return {email:"a@b.com"};}
-async function sendEmail(email:string, subject:string):Promise<void> {}
 
-// getUser()
-//     .then((user: User) => {
-//         return sendEmail(user.email, 'Welcome!');
-//     }).catch()
+function matchesWeather(weather: string, attraction: POIDetails): boolean {
+  if (attraction.type === 'museum') {
+    return true;
+  } else if (attraction.type === 'park') {
+    return weather === 'sunny';
+  } else if (attraction.type === 'restaurant') {
+    return true;
+  } else
+    return weather === 'sunny';
+}
 
+export interface Apis {
+  fetchAttractions: (cityId: string) => Promise<Array<POI>>;
+  fetchAttractionDetails: (attractionId: number) => Promise<POIDetails>;
+  fetchAttractionDetailsBatch: (attractionIds: number[]) => Promise<POIDetails[]>;
+  fetchWeather: (cityId: string) => Promise<string>;
+}
 
-// try {
-//     let user = await getUser();
-//     let data = await sendEmail(user.email, 'Welcome!');
-// } catch (e) {
-// }
-// TODO async await
+export interface POI {
+  id: number;
+  name: string;
+}
+
+export interface POIDetails {
+  id: number;
+  name: string;
+  ratingStars: number;
+  description?: string;
+  location: string;
+  type: string; // one of: 'museum', 'park', 'restaurant', 'amusement'
+}
+
+export interface Attraction {
+  id: number;
+  name: string;
+  rating: number;
+  location: string;
+}

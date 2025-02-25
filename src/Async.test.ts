@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import {it, describe} from 'mocha';
-import {suggestAttractions, Apis, POI, POIDetails, Attraction} from './AsyncFlow';
+import {suggestAttractions, Apis, POI, POIDetails, Attraction} from './Async';
 
 describe('suggestAttractions', () => {
   const attractions: Array<POIDetails> = [

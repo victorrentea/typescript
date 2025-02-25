@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 
-async function foo() {
+async function wrong() {
   try {
     // remove the 'await' below to see a prod bug! :)
     return await waitAndMaybeReject();
@@ -16,6 +16,6 @@ async function waitAndMaybeReject() {
 
 describe('AsyncError', () =>
   it('should return caught', async () => {
-    const result = await foo();
+    const result = await wrong();
     expect(result).to.be.equal('caught');
   }));

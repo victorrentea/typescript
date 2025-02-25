@@ -5,7 +5,6 @@ export class X {
     get list(): /*readonly*/ string[] { // TODO uncomment and see .splice below crashing
         return this._list;
     }
-
 }
 console.log("hello");
 const x = new X(["a", "b", "c", "d"]);
