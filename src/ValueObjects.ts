@@ -44,8 +44,11 @@ class CarModel {
 it('should filter car models', () => {
   const criteria = new CarSearchCriteria(2014, 2018, "Ford");
   const fordFocusMk2 = new CarModel("Ford", "Focus", 2012, 2016);
-  const models = filterCarModels(criteria, [fordFocusMk2]);
-  console.log(models);
+  const car2 = new CarModel("Renaul", "Megane", 2019, 2025);
+  const initialList = [fordFocusMk2, car2];
+  const models = filterCarModels(criteria, initialList);
+  console.log("initial: ", initialList);
+  console.log("result: ", models);
   expect(models).to.contain(fordFocusMk2);
 });
 
