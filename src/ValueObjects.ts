@@ -14,10 +14,11 @@ function applyCapacityFilter() {
   console.log(MathUtil.intervalsIntersect({start: 1000, end: 1600}, {start: 1250, end: 2000}));
 }
 
+type Interval = { start: number, end: number };
+
 class MathUtil {
   // static intervalsIntersect(start1: number, end1: number, start2: number, end2: number): boolean {
-  static intervalsIntersect(interval1: { start: number, end: number },
-                            interval2: { start: number, end: number }): boolean {
+  static intervalsIntersect(interval1: Interval, interval2: Interval): boolean {
     return interval1.start <= interval2.end && interval2.start <= interval1.end; // from SO
   }
 }
