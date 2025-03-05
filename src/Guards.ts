@@ -51,3 +51,46 @@ type BonusPackage = { value: number }
 class Award {
 
 }
+
+
+const x: string[] = [];
+if ([]) console.log("true");
+else console.log("false");
+
+
+class Ex1 extends Error {
+  constructor(message: string) {
+    super(message);
+  }
+}
+
+class Ex2 extends Error {
+}
+
+function fff() {
+  throw new Ex1("");
+}
+
+try {
+  fff();
+} catch (e) {
+
+}
+
+
+function equal3(tenantType: any) {
+  if (!tenantType || tenantType !== "Customer") console.log("TRUE0"); else console.log("FALSE0");
+  if (tenantType !== "Customer") console.log("TRUE1"); else console.log("FALSE1");
+}
+
+equal3(undefined);
+equal3("Customer");
+equal3("Else");
+equal3(null);
+
+//-----
+const tenantLicenses = [];
+// const tenantLicenses = [{ applicationId: "QM" }];
+// const tenantLicenses = [{ applicationId: "QM" }, { applicationId: "AM" }];
+if (!tenantLicenses.length || !tenantLicenses.find(license => license.applicationId === "QM"))
+  console.log("TRUEX"); else console.log("FALSEX");

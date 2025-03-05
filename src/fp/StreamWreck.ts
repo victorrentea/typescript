@@ -1,34 +1,42 @@
 type ProductRepo = {
-    getHiddenProductIds(): number[];
+  getHiddenProductIds(): number[];
 };
 
 
 function differenceInDays(date1: Date, date2: Date): number {
-    const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-    const diffDays = Math.round(Math.abs((date1.getTime() - date2.getTime()) / oneDay));
-    return diffDays;
+  const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+  const diffDays = Math.round(Math.abs((date1.getTime() - date2.getTime()) / oneDay));
+  return diffDays;
 }
 
 export class StreamWreck {
-    constructor(private readonly productRepo: ProductRepo) {
-    }
+  constructor(private readonly productRepo: ProductRepo) {
+  }
 
-    public getFrequentOrderedProducts(orders: Order[]): Product[] {
-		return Array.from(orders
-			.filter(order => order.active)
-			// filter orders that are less than a year old
-			.filter(order => differenceInDays(new Date(), order.creationDate) < 365)
-			.flatMap(order => order.orderLines)
-			.reduce((productCountMap, orderLine) => {
-				const product = orderLine.product;
-				const count = productCountMap.get(product) || 0;
-				productCountMap.set(product, count + orderLine.itemCount);
-				return productCountMap;
-			}, new Map<Product, number>())
-			.entries())
-			.filter(([product, count]) => count >= 10)
-			.filter(([product]) => !product.isDeleted)
-			.filter(([product]) => !this.productRepo.getHiddenProductIds().includes(product.id))
-			.map(([product]) => product);
-	}
+  public getFrequentOrderedProducts(orders: Order[]): Product[] {
+    const map = new Map<Product, number>();
+    orders
+      .filter(order => order.active)
+      .filter(order => this.lessThanAYearOld(order))
+      .flatMap(order => order.orderLines)
+      .forEach(orderLine => {
+        const product = orderLine.product;
+        const oldCount = map.get(product) || 0;
+        map.set(product, oldCount + orderLine.itemCount);
+      });
+    const hiddenProductIds = this.productRepo.getHiddenProductIds(); // 1 call, not N calls to DB
+    return Array.from(map.entries())
+      .filter(([product, count]) => count >= 10)
+      .map(([product]) => product)
+      .filter(product => !product.isDeleted)
+      .filter(product => !hiddenProductIds.includes(product.id));
+
+    // for (...) {
+    // 	this.productRepo.getHiddenProductIds()
+    // }
+  }
+
+  private lessThanAYearOld(order: Order): boolean {
+    return differenceInDays(new Date(), order.creationDate) < 365;
+  }
 }

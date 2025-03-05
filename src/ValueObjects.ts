@@ -17,12 +17,16 @@ type IntervalType = { start: number, end: number };
 type IntervalTypeMaybe = IntervalType | undefined;
 
 interface Interval { // Json DTO from a Swagger/OpenApi
-  start: number;
-  end: number;
+  readonly start: number;
+  readonly end: number;
 }
 
-const int: Interval = {start: 500, end: 500};
-const int2: IntervalType = {start: 500, end: 500};
+const int: Interval = {start: 500, end: 600};
+const int2: IntervalType = {start: 500, end: 600};
+
+const intShorter = {...int, end: 650, meeToo: 2};
+intShorter.start = 2;
+intShorter.end = 2;
 
 class IntervalClass { // Json DTO from a Swagger/OpenApi
   constructor(readonly start: number, readonly end: number) {
@@ -33,6 +37,7 @@ class IntervalClass { // Json DTO from a Swagger/OpenApi
   }
 }
 
+
 class IntervalClass2 { // Json DTO from a Swagger/OpenApi
   constructor(readonly start: number, readonly end: number) {
   }
@@ -41,6 +46,10 @@ class IntervalClass2 { // Json DTO from a Swagger/OpenApi
     console.log("second behavior")
   }
 }
+
+const obj = new IntervalClass(500, 600);
+obj.f = () => console.log("OMG!!");
+// obj.start = 2;
 
 // const intC:IntervalClass={start:500, end:500, f(){}}; // compiles but replaces f() with an empty method
 // console.log("Before the experiment")
@@ -54,6 +63,7 @@ omg(intC);
 class MathUtil {
   // static intervalsIntersect(start1: number, end1: number, start2: number, end2: number): boolean {
   static intervalsIntersect(interval1: Interval, interval2: Interval): boolean {
+    interval1.start = 0;
     return interval1.start <= interval2.end && interval2.start <= interval1.end; // from SO
   }
 }
