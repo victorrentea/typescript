@@ -14,19 +14,26 @@ class One {
     }
 }
 
+const ANSWER_OF_LIFE = 42;
+
 class Two {
     g(r: R): number {
         const b = 2;
         console.log("b=" + b);
         return 1 + b + r.x;
     }
-
     unknown(): void {
-        console.log("b=" + 987);
+        console.log("b=" + ANSWER_OF_LIFE);
     }
 }
 
+console.log("WOW:" + new Two().g({x: 1}))
 
+function badOld(t: Two) { // any stops the IDE to track types and methods/attrs bound to them
+    return t.g({x: 1});
+}
+
+console.log("BAD:" + badOld(new Two()))
 // TODO: Practice Refactoring
 //  * How to?
 //    - Right-click > Refactor
