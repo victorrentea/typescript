@@ -1,26 +1,26 @@
 import {expect} from "chai";
 
 function filterCarModels(criteria: CarSearchCriteria, models: CarModel[]): CarModel[] {
-  for (let i = 0; i < models.length; i++) {
-    if (!MathUtil.intervalsIntersect(models[i].startYear, models[i].endYear, criteria.startYear, criteria.endYear)) {
-      models.splice(i, 1);
-      i--;
-    }
-  }
+  const criteriaInterval = {start: criteria.startYear, end: criteria.endYear};
+  const results = models.filter(model =>
+    MathUtil.intervalsIntersect({start: model.startYear, end: model.endYear}, criteriaInterval))
+  // MathUtil.intervalsIntersect({a:model.startYear, b:model.endYear, c:criteria.startYear, d:criteria.endYear})) // future proof, allows addind a prop w/o breaking change
+  // MathUtil.intervalsIntersect(model, criteria)) // too much coupling
   console.log("More filtering logic");
-  return models;
+  return results;
 }
 
 function applyCapacityFilter() {
-  console.log(MathUtil.intervalsIntersect(1000, 1600, 1250, 2000));
+  console.log(MathUtil.intervalsIntersect({start: 1000, end: 1600}, {start: 1250, end: 2000}));
 }
 
 class MathUtil {
-  static intervalsIntersect(start1: number, end1: number, start2: number, end2: number): boolean {
-    return start1 <= end2 && start2 <= end1;
+  // static intervalsIntersect(start1: number, end1: number, start2: number, end2: number): boolean {
+  static intervalsIntersect(interval1: { start: number, end: number },
+                            interval2: { start: number, end: number }): boolean {
+    return interval1.start <= interval2.end && interval2.start <= interval1.end; // from SO
   }
 }
-
 
 class CarSearchCriteria {
   constructor(public readonly startYear: number,
