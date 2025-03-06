@@ -4,22 +4,26 @@ export class Movie {
 }
 
 export const MOVIE_CATEGORY = {
-  CHILDRENS: 2,
+  CHILDREN: 2,
   REGULAR: 0,
   NEW_RELEASE: 1
 };
 
+export class Rental {
+  public movie: Movie = {title: "", priceCode: 0};
+  public rentDays: number = 0;
+}
 
 export class Customer {
   private readonly name: string;
-  private readonly rentals: any[] = [];
+  private readonly rentals: Rental[] = [];
 
   constructor(name: string) {
     this.name = name;
   }
 
-  public addRental(m: Movie, d: number) {
-    this.rentals.push({d: d, m: m});
+  public addRental(movie: Movie, rentDuration: number) {
+    this.rentals.push({movie: movie, rentDays: rentDuration});
   }
 
   public statement(): string {
@@ -28,23 +32,23 @@ export class Customer {
 
     let result = "Rental Record for " + this.name + "\n";
     for (const r of this.rentals) {
-      let each = r.m;
+      let each = r.movie;
       let thisAmount = 0;
-      let dr = r.d;
+      const rentTime = r.rentDays;
       // determine amounts for each line
       switch (each.priceCode) {
         case MOVIE_CATEGORY.REGULAR:
           thisAmount += 2;
-          if (dr > 2)
-            thisAmount += (dr - 2) * 1.5;
+          if (rentTime > 2)
+            thisAmount += (rentTime - 2) * 1.5;
           break;
         case MOVIE_CATEGORY.NEW_RELEASE:
-          thisAmount += dr * 3;
+          thisAmount += rentTime * 3;
           break;
-        case MOVIE_CATEGORY.CHILDRENS:
+        case MOVIE_CATEGORY.CHILDREN:
           thisAmount += 1.5;
-          if (dr > 3)
-            thisAmount += (dr - 3) * 1.5;
+          if (rentTime > 3)
+            thisAmount += (rentTime - 3) * 1.5;
           break;
       }
       // add frequent renter points
@@ -52,7 +56,7 @@ export class Customer {
       // add bonus for a two day new release rental
       if (each.priceCode != null &&
           (each.priceCode == MOVIE_CATEGORY.NEW_RELEASE)
-          && dr > 1)
+          && rentTime > 1)
         frequentRenterPoints++;
       // show figures line for this rental
       result += "\t" + each.title + "\t" + thisAmount.toFixed(1) + "\n";
