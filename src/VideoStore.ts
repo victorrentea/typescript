@@ -1,6 +1,6 @@
 export class Movie {
-  public title: string;
-  public priceCode: number;
+  public title: string = "";
+  public priceCode: number = 1;
 }
 
 export const MOVIE_CATEGORY = {
