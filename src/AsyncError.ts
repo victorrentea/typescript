@@ -6,6 +6,7 @@ async function wrong() {
     return await waitAndMaybeReject();
   } catch (e) {
     return 'caught';
+
   }
 }
 
