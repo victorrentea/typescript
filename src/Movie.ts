@@ -1,5 +1,5 @@
 import {MOVIE_CATEGORY} from "./constants";
-import {Rental} from "./VideoStore";
+import {Rental} from "./Rental";
 
 export class Movie {
     public title: string = "";

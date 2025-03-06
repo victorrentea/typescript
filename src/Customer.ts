@@ -1,4 +1,4 @@
-import {Rental} from "./VideoStore";
+import {Rental} from "./Rental";
 import {calculateRentalAmount, calculateRenterFrequentPoints} from "./Movie";
 
 export class Customer {
@@ -11,7 +11,6 @@ export class Customer {
     }
 
     public generateCustomerRentalReport(): string {
-        let totalAmount: number = 0;
         let frequentRenterPoints = 0;
 
         let result = "Rental Record for " + this.name + "\n";
@@ -36,12 +35,14 @@ export class Customer {
         //     totalAmount += calculateRentalAmount(movieRental);
         // }
 
-        this.rentals.map(movieRental=>{
+        this.rentals.forEach(movieRental => {
             frequentRenterPoints += calculateRenterFrequentPoints(movieRental);
-            // show figures line for this currentRental
-            result += "\t" + movieRental.movie.title + "\t" + calculateRentalAmount(movieRental).toFixed(1) + "\n";
-            totalAmount += calculateRentalAmount(movieRental);
         })
+        this.rentals.forEach(movieRental => {
+            result += "\t" + movieRental.movie.title + "\t" + calculateRentalAmount(movieRental).toFixed(1) + "\n";
+        })
+        let totalAmount: number = 0;
+        this.rentals.forEach(movieRental => totalAmount += calculateRentalAmount(movieRental))
 
         // add footer lines
         result += "Amount owed is " + totalAmount.toFixed(1) + "\n";
