@@ -1,70 +1,50 @@
-export class Movie {
-  public title: string = "";
-  public priceCode: number = 1;
-}
-
-export const MOVIE_CATEGORY = {
-  CHILDREN: 2,
-  REGULAR: 0,
-  NEW_RELEASE: 1
-};
-
-export class Rental {
-
-  constructor(public readonly movie: Movie, public readonly rentDays: number) {
-
-  }
-}
+import { Movie } from "./Movie";
+import { Rental } from "./Rental";
 
 export class Customer {
   private readonly name: string;
   private readonly rentals: Rental[] = [];
+  private renterPoints = 0;
 
   constructor(name: string) {
     this.name = name;
   }
 
-  public addRental(movie: Movie, rentDuration: number) {
-    this.rentals.push({movie: movie, rentDays: rentDuration});
+  public addRental(movie: Movie, rentDuration: number): void {
+    this.rentals.push(new Rental(movie, rentDuration));
   }
 
-  public statement(): string {
-    let totalAmount: number = 0;
-    let frequentRenterPoints = 0;
+  public getRentalRecord(): string {
+    let record = this.getRecordHeader(this.name);
 
-    let result = "Rental Record for " + this.name + "\n";
     for (const rental of this.rentals) {
-      let movieTotalPrice = 0;
-      // determine amounts for each line
-      switch (rental.movie.priceCode) {
-        case MOVIE_CATEGORY.REGULAR:
-          movieTotalPrice += 2;
-          if (rental.rentDays > 2)
-            movieTotalPrice += (rental.rentDays - 2) * 1.5;
-          break;
-        case MOVIE_CATEGORY.NEW_RELEASE:
-          movieTotalPrice += rental.rentDays * 3;
-          break;
-        case MOVIE_CATEGORY.CHILDREN:
-          movieTotalPrice += 1.5;
-          if (rental.rentDays > 3)
-            movieTotalPrice += (rental.rentDays - 3) * 1.5;
-          break;
+      this.renterPoints++;
+      if (rental.isQualifiedForPointsBonus) {
+        this.renterPoints++;
       }
-      // add frequent renter points
-      frequentRenterPoints++;
-      // add bonus for a two day new release rental
-      if (rental.movie.priceCode != null &&
-          (rental.movie.priceCode == MOVIE_CATEGORY.NEW_RELEASE)
-          && rental.rentDays > 1)
-        frequentRenterPoints++;
-      // show figures line for this rental
-      result += "\t" + rental.movie.title + "\t" + movieTotalPrice.toFixed(1) + "\n";
-      totalAmount += movieTotalPrice;
+
+      record += this.getRecordMovieLine(rental.movie.title, rental.price);
     }
-    // add footer lines
-    result += "Amount owed is " + totalAmount.toFixed(1) + "\n";
-    result += "You earned " + frequentRenterPoints + " frequent renter points";
+
+    const totalPrice = this.rentals.map((rental) => rental.price).reduce((previous, current) => previous + current);
+    record += this.getRecordFooter(totalPrice);
+
+    return record;
+  }
+
+  private getRecordHeader(name: string): string {
+    return "Rental Record for " + name + "\n";
+  }
+
+  private getRecordMovieLine(title: string, price: number): string {
+    return "\t" + title + "\t" + price.toFixed(1) + "\n";
+  }
+
+  private getRecordFooter(totalPrice: number): string {
+    let result = "Amount owed is " + totalPrice.toFixed(1) + "\n";
+    result += "You earned " + this.renterPoints + " frequent renter points";
+
     return result;
   }
+
 }
