@@ -10,8 +10,10 @@ export const MOVIE_CATEGORY = {
 };
 
 export class Rental {
-  public movie: Movie = {title: "", priceCode: 0};
-  public rentDays: number = 0;
+
+  constructor(public readonly movie: Movie, public readonly rentDays: number) {
+
+  }
 }
 
 export class Customer {
@@ -31,36 +33,34 @@ export class Customer {
     let frequentRenterPoints = 0;
 
     let result = "Rental Record for " + this.name + "\n";
-    for (const r of this.rentals) {
-      let each = r.movie;
-      let thisAmount = 0;
-      const rentTime = r.rentDays;
+    for (const rental of this.rentals) {
+      let movieTotalPrice = 0;
       // determine amounts for each line
-      switch (each.priceCode) {
+      switch (rental.movie.priceCode) {
         case MOVIE_CATEGORY.REGULAR:
-          thisAmount += 2;
-          if (rentTime > 2)
-            thisAmount += (rentTime - 2) * 1.5;
+          movieTotalPrice += 2;
+          if (rental.rentDays > 2)
+            movieTotalPrice += (rental.rentDays - 2) * 1.5;
           break;
         case MOVIE_CATEGORY.NEW_RELEASE:
-          thisAmount += rentTime * 3;
+          movieTotalPrice += rental.rentDays * 3;
           break;
         case MOVIE_CATEGORY.CHILDREN:
-          thisAmount += 1.5;
-          if (rentTime > 3)
-            thisAmount += (rentTime - 3) * 1.5;
+          movieTotalPrice += 1.5;
+          if (rental.rentDays > 3)
+            movieTotalPrice += (rental.rentDays - 3) * 1.5;
           break;
       }
       // add frequent renter points
       frequentRenterPoints++;
       // add bonus for a two day new release rental
-      if (each.priceCode != null &&
-          (each.priceCode == MOVIE_CATEGORY.NEW_RELEASE)
-          && rentTime > 1)
+      if (rental.movie.priceCode != null &&
+          (rental.movie.priceCode == MOVIE_CATEGORY.NEW_RELEASE)
+          && rental.rentDays > 1)
         frequentRenterPoints++;
       // show figures line for this rental
-      result += "\t" + each.title + "\t" + thisAmount.toFixed(1) + "\n";
-      totalAmount += thisAmount;
+      result += "\t" + rental.movie.title + "\t" + movieTotalPrice.toFixed(1) + "\n";
+      totalAmount += movieTotalPrice;
     }
     // add footer lines
     result += "Amount owed is " + totalAmount.toFixed(1) + "\n";
