@@ -1,6 +1,6 @@
 export class Movie {
   public title: string = "";
-  public priceCode: number = 0;
+  public priceCode: number = 1;
 }
 
 export const MOVIE_CATEGORY = {
@@ -63,4 +63,5 @@ export class Customer {
     result += "You earned " + frequentRenterPoints + " frequent renter points";
     return result;
   }
+  //test push
 }
