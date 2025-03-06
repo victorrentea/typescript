@@ -1,5 +1,8 @@
 import { MovieCategory } from "./MovieCategory";
 
 export class Movie {
-  constructor(public title: string, public category: MovieCategory) {}
+  constructor(
+    public readonly title: string,
+    public readonly category: MovieCategory) {
+  }
 }

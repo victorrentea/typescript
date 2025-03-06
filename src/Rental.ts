@@ -1,14 +1,14 @@
-import { Movie } from "./Movie";
-import { MovieCategory } from "./MovieCategory";
+import {Movie} from "./Movie";
+import {MovieCategory} from "./MovieCategory";
 
 export class Rental {
 
-  constructor(public readonly movie: Movie, public readonly rentDays: number) {}
+  constructor(public readonly movie: Movie,
+              public readonly rentDays: number) {
+  }
 
   public get price(): number {
-    const category = this.movie.category;
-
-    switch (category) {
+    switch (this.movie.category) {
       case MovieCategory.REGULAR:
         return this.getRegularMoviePrice(this.rentDays);
       case MovieCategory.NEW_RELEASE:
@@ -20,7 +20,7 @@ export class Rental {
     }
   }
 
-  public get isQualifiedForPointsBonus(): boolean {
+  public get isEligibleForBonusPoints(): boolean {
     return this.movie.category === MovieCategory.NEW_RELEASE && this.rentDays > 1;
   }
 

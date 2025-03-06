@@ -1,10 +1,11 @@
-import { Movie } from "./Movie";
-import { Rental } from "./Rental";
+import {Movie} from "./Movie";
+import {Rental} from "./Rental";
+
+const sum = (a: number, b: number) => a + b;
 
 export class Customer {
   private readonly name: string;
   private readonly rentals: Rental[] = [];
-  private renterPoints = 0;
 
   constructor(name: string) {
     this.name = name;
@@ -14,37 +15,31 @@ export class Customer {
     this.rentals.push(new Rental(movie, rentDuration));
   }
 
-  public getRentalRecord(): string {
-    let record = this.getRecordHeader(this.name);
+  public getRentalRecord = (): string => this.getHeader() + this.getBody() + this.getFooter();
 
-    for (const rental of this.rentals) {
-      this.renterPoints++;
-      if (rental.isQualifiedForPointsBonus) {
-        this.renterPoints++;
-      }
+  private getHeader = (): string => "Rental Record for " + this.name + "\n";
 
-      record += this.getRecordMovieLine(rental.movie.title, rental.price);
+  private getBody = (): string => this.rentals.map(this.getBodyLine).join("");
+
+  private getBodyLine = (rental: Rental): string => "\t" + rental.movie.title + "\t" + rental.price.toFixed(1) + "\n";
+
+  private getFooter = (): string =>
+    "Amount owed is " + this.getTotalPrice().toFixed(1) + "\n" +
+    "You earned " + this.getTotalPoints() + " frequent renter points";
+
+  private getTotalPrice = (): number =>
+    this.rentals.map((rental) => rental.price).reduce(sum);
+
+  private getTotalPoints = (): number =>
+    this.rentals.map((rental) => this.computePoints(rental)).reduce(sum);
+
+  private computePoints(rental: Rental): number {
+    let renterPoints = 1;
+    if (rental.isEligibleForBonusPoints) {
+      renterPoints++;
     }
-
-    const totalPrice = this.rentals.map((rental) => rental.price).reduce((previous, current) => previous + current);
-    record += this.getRecordFooter(totalPrice);
-
-    return record;
+    return renterPoints;
   }
 
-  private getRecordHeader(name: string): string {
-    return "Rental Record for " + name + "\n";
-  }
-
-  private getRecordMovieLine(title: string, price: number): string {
-    return "\t" + title + "\t" + price.toFixed(1) + "\n";
-  }
-
-  private getRecordFooter(totalPrice: number): string {
-    let result = "Amount owed is " + totalPrice.toFixed(1) + "\n";
-    result += "You earned " + this.renterPoints + " frequent renter points";
-
-    return result;
-  }
 
 }
