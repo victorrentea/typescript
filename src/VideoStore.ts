@@ -9,17 +9,22 @@ export const MOVIE_CATEGORY = {
   NEW_RELEASE: 1
 };
 
+interface Rental {
+    numberOfDays: number;
+    movie: Movie;
+}
+
 
 export class Customer {
   private name: string;
-  private rentals: any[] = [];
+  private rentals: Rental[] = [];
 
   constructor(name: string) {
     this.name = name;
   }
 
-  public addRental(m: Movie, d: number) {
-    this.rentals.push({d: d, m: m});
+  public addRental(movie: Movie, numberOfDays: number) {
+    this.rentals.push({numberOfDays: numberOfDays, movie: movie});
   }
 
   public statement(): string {
@@ -28,9 +33,9 @@ export class Customer {
 
     let result = "Rental Record for " + this.name + "\n";
     for (const r of this.rentals) {
-      let each = r.m;
+      let each = r.movie;
       let thisAmount = 0;
-      let dr = r.d;
+      let dr = r.numberOfDays;
       // determine amounts for each line
       switch (each.priceCode) {
         case MOVIE_CATEGORY.REGULAR:
