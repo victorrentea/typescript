@@ -7,17 +7,25 @@ export class Rental {
               public readonly rentDays: number) {
   }
 
+  private PRICE_FUNCTION_MAP: Map<MovieCategory, (x: number) => number> = new Map([
+    [MovieCategory.REGULAR, this.getRegularMoviePrice],
+    [MovieCategory.NEW_RELEASE, (x: number) => x * 3],
+    [MovieCategory.CHILDREN, this.getChildrenMoviePrice]
+  ]);
+
   public get price(): number {
-    switch (this.movie.category) {
-      case MovieCategory.REGULAR:
-        return this.getRegularMoviePrice(this.rentDays);
-      case MovieCategory.NEW_RELEASE:
-        return this.rentDays * 3;
-      case MovieCategory.CHILDREN:
-        return this.getChildrenMoviePrice(this.rentDays);
-      default:
-        return NaN;
-    }
+    // switch (this.movie.category) {
+    //   case MovieCategory.REGULAR:
+    //     return this.getRegularMoviePrice(this.rentDays);
+    //   case MovieCategory.NEW_RELEASE:
+    //     return this.rentDays * 3;
+    //   case MovieCategory.CHILDREN:
+    //     return this.getChildrenMoviePrice(this.rentDays);
+    //   default:
+    //     return NaN;
+    // }
+    const f = this.PRICE_FUNCTION_MAP.get(this.movie.category);
+    return f ? f(this.rentDays) : NaN;
   }
 
   public get isEligibleForBonusPoints(): boolean {
