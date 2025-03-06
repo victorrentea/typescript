@@ -9,7 +9,6 @@ export const MOVIE_CATEGORY = {
   NEW_RELEASE: 1
 };
 
-
 export class Customer {
   private name: string;
   private rentals: any[] = [];
