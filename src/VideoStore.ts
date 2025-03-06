@@ -1,6 +1,31 @@
 export class Movie {
   public title: string = "";
   public priceCode: number = 1;
+
+  public calculateRentalAmount(numberOfDays: number): number {
+    let currentAmount = 0;
+    switch (this.priceCode) {
+      case MOVIE_CATEGORY.REGULAR:
+        currentAmount += 2;
+        if (numberOfDays > 2)
+          currentAmount += (numberOfDays - 2) * 1.5;
+        break;
+      case MOVIE_CATEGORY.NEW_RELEASE:
+        currentAmount += numberOfDays * 3;
+        break;
+      case MOVIE_CATEGORY.CHILDRENS:
+        currentAmount += 1.5;
+        if (numberOfDays > 3)
+          currentAmount += (numberOfDays - 3) * 1.5;
+        break;
+    }
+    return currentAmount;
+  }
+
+  constructor(title: string, priceCode: number) {
+    this.title = title;
+    this.priceCode = priceCode;
+  }
 }
 
 export const MOVIE_CATEGORY = {
@@ -32,41 +57,41 @@ export class Customer {
     let frequentRenterPoints = 0;
 
     let result = "Rental Record for " + this.name + "\n";
-    for (const r of this.rentals) {
-      let each = r.movie;
-      let thisAmount = 0;
-      let dr = r.numberOfDays;
-      // determine amounts for each line
-      switch (each.priceCode) {
+    for (const currentRental of this.rentals) {
+      let currentMovie = currentRental.movie;
+      //let currentAmount = 0;
+      const numberOfDays = currentRental.numberOfDays;
+      // determine amounts for currentMovie line
+      /*switch (currentMovie.priceCode) {
         case MOVIE_CATEGORY.REGULAR:
-          thisAmount += 2;
-          if (dr > 2)
-            thisAmount += (dr - 2) * 1.5;
+          currentAmount += 2;
+          if (numberOfDays > 2)
+            currentAmount += (numberOfDays - 2) * 1.5;
           break;
         case MOVIE_CATEGORY.NEW_RELEASE:
-          thisAmount += dr * 3;
+          currentAmount += numberOfDays * 3;
           break;
         case MOVIE_CATEGORY.CHILDRENS:
-          thisAmount += 1.5;
-          if (dr > 3)
-            thisAmount += (dr - 3) * 1.5;
+          currentAmount += 1.5;
+          if (numberOfDays > 3)
+            currentAmount += (numberOfDays - 3) * 1.5;
           break;
-      }
+      }*/
+      let currentAmount = currentMovie.calculateRentalAmount(numberOfDays);
       // add frequent renter points
       frequentRenterPoints++;
-      // add bonus for a two day new release rental
-      if (each.priceCode != null &&
-          (each.priceCode == MOVIE_CATEGORY.NEW_RELEASE)
-          && dr > 1)
+      // add bonus for a two day new release currentRental
+      if (currentMovie.priceCode != null &&
+          (currentMovie.priceCode == MOVIE_CATEGORY.NEW_RELEASE)
+          && numberOfDays > 1)
         frequentRenterPoints++;
-      // show figures line for this rental
-      result += "\t" + each.title + "\t" + thisAmount.toFixed(1) + "\n";
-      totalAmount += thisAmount;
+      // show figures line for this currentRental
+      result += "\t" + currentMovie.title + "\t" + currentAmount.toFixed(1) + "\n";
+      totalAmount += currentAmount;
     }
     // add footer lines
     result += "Amount owed is " + totalAmount.toFixed(1) + "\n";
     result += "You earned " + frequentRenterPoints + " frequent renter points";
     return result;
   }
-  //test push
 }
