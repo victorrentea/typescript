@@ -12,6 +12,8 @@ class TriviaRunner {
             game.roll(Math.floor(Math.random() * 6) + 1);
             if (Math.floor(Math.random() * 10) == 7) {
                 notAWinner = game.wrongAnswer();
+
+                
             }
             else {
                 notAWinner = game.wasCorrectlyAnswered();
