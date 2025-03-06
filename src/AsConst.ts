@@ -9,5 +9,5 @@ export class X {
 console.log("hello");
 const x = new X(["a", "b", "c", "d"]);
 x.list.splice(1, 1);
-
+console.log("Hello world");
 console.log(x.list);
