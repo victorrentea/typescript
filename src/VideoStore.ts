@@ -61,5 +61,6 @@ export class Customer {
     result += "Amount owed is " + totalAmount.toFixed(1) + "\n";
     result += "You earned " + frequentRenterPoints + " frequent renter points";
     return result;
+    
   }
 }
